@@ -132,6 +132,7 @@
 | 导出飞书、飞书文档、导出到飞书 | feishu-export |
 | 读取飞书、导入飞书案例 | feishu-read |
 | 生成图表、<!-- chart --> | market-chart |
+| **Hermes 斜杠 `/vidau-market-agent`** | **vidau-market-agent**（读 AGENT.md 全库入口） |
 
 ### 当用户说「TTS 全案 / 布局 TikTok / 合作方案」时
 

@@ -30,6 +30,11 @@ Install:
 - Mac/Linux: bash setup.sh
 - Or: npm install && npx playwright install chromium
 
+Register Hermes slash command /vidau-market-agent (after clone):
+- Windows: install-hermes-skill.bat
+- Mac/Linux: bash scripts/install-hermes-skill.sh
+- See: https://github.com/vidaudeveloper/market-agent/blob/main/HERMES.md
+
 Requirements: Node.js 18+
 
 Use Vidau Market Agent when I need:
@@ -54,7 +59,17 @@ Optional verification export (ask me before running if no sample report exists):
 node scripts/feishu-export.js output/飞书导出测试.md "Vidau Market Agent 安装验证" --charts
 (If output/ has no test file, create a minimal markdown with one table and <!-- chart:doughnut --> first.)
 
-After setup, open this repository in my browser:
+After setup, register the slash skill and open the repo as workspace:
+
+Windows: install-hermes-skill.bat
+Mac/Linux: bash scripts/install-hermes-skill.sh
+Docs: https://github.com/vidaudeveloper/market-agent/blob/main/HERMES.md
+
+Then in Hermes chat: /reload-skills
+Verify: type / and confirm /vidau-market-agent appears.
+Run: /vidau-market-agent
+
+The workspace MUST be the cloned market-agent repo root (for AGENT.md, scripts/, output/).
 https://github.com/vidaudeveloper/market-agent
 
 If I am logged in to GitHub, ask me whether you should star it for me as a quick demo that browser interaction works. Only click the star if I explicitly say yes.
@@ -80,8 +95,9 @@ If the task needs my product links, GMV targets, Feishu OAuth, or chuhaijiang lo
 | 3 | 检查 Node、飞书连接状态 |
 | 4 | **不要**索要 `AI_API_KEY`（除非要用 `ai-analyze.js`） |
 | 5 | 可选：导出测试稿到飞书验证 |
-| 6 | 浏览器打开 GitHub 仓库；登录时可问是否 star |
-| 7 | 询问第一个营销任务 |
+| 6 | 运行 `install-hermes-skill.bat` / `install-hermes-skill.sh`，`/reload-skills` 后出现 `/vidau-market-agent` |
+| 7 | 浏览器打开 GitHub 仓库；登录时可问是否 star |
+| 8 | 询问第一个营销任务 |
 
 ---
 
@@ -95,6 +111,7 @@ If the task needs my product links, GMV targets, Feishu OAuth, or chuhaijiang lo
 | Skills 目录 | https://github.com/vidaudeveloper/market-agent/tree/main/skills |
 | 飞书导出 Skill | https://github.com/vidaudeveloper/market-agent/blob/main/skills/feishu-export/SKILL.md |
 | TTS 全案编排 | https://github.com/vidaudeveloper/market-agent/blob/main/skills/tts-full-case/SKILL.md |
+| Hermes 斜杠技能 | https://github.com/vidaudeveloper/market-agent/blob/main/HERMES.md |
 
 ---
 
