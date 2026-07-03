@@ -9,6 +9,7 @@
     "ai:chart": "node scripts/ai-chart.js",
     "feishu:auth": "node scripts/feishu-auth.js",
     "feishu:connect": "node scripts/feishu-auth.js",
+    "feishu:diagnose": "node scripts/feishu-diagnose.js",
     "feishu:export": "node scripts/feishu-export.js",
     "feishu:read": "node scripts/feishu-read-doc.js",
     "chart": "node scripts/chart-gen.js",

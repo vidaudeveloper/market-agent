@@ -32,7 +32,15 @@ if not exist "node_modules" (
     )
 )
 
-echo [1/2] 正在打开浏览器，请在飞书页面点击「同意授权」...
+echo [0/3] 运行诊断...
+node scripts/feishu-diagnose.js
+echo.
+echo 请确认上面「应用 ID」与浏览器授权页 client_id 一致。
+echo 按任意键继续打开浏览器授权...
+pause >nul
+echo.
+
+echo [1/3] 正在打开浏览器，请在飞书页面点击「同意授权」...
 echo.
 node scripts/feishu-auth.js
 if %errorlevel% neq 0 (
@@ -41,17 +49,17 @@ if %errorlevel% neq 0 (
     echo   授权未成功
     echo ========================================
     echo.
-    echo 若页面显示「没有 access to agent飞书认证」:
-    echo   1. 确认没有用 Hermes 内置飞书，只用本脚本
-    echo   2. 联系飞书管理员把你加入应用「可用范围」
-    echo   3. 详见 FEISHU-USER-GUIDE.md
+    echo 若页面显示「没有 agent飞书认证 使用权限」且你是位道科技员工:
+    echo   → 这是管理员问题，请把 FEISHU-ADMIN.md 发给飞书管理员
+    echo   → 用户侧: 确认用的是 feishu-connect.bat 而非 Hermes 按钮
+    echo   → 运行 node scripts/feishu-diagnose.js 把结果发给管理员
     echo.
     pause
     exit /b 1
 )
 
 echo.
-echo [2/2] 检查连接状态...
+echo [2/3] 检查连接状态...
 node scripts/feishu-auth.js --status
 echo.
 echo ========================================

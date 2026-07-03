@@ -78,22 +78,32 @@ node scripts/feishu-auth.js --status
 
 ## 常见问题
 
-### 1. 出现「没有 access to agent飞书认证」
+### 1. 出现「没有 agent飞书认证 / 使用权限」
 
-**原因**：用了 Hermes 内置飞书，没用本仓库脚本。
+分两种情况：
 
-**解决**：
+**A. 没用 `feishu-connect.bat`，在 Hermes 里点的飞书**  
+→ 关闭页面，改用 `feishu-connect.bat`。
 
-1. 关闭那个错误页面，**不要**在 Hermes 设置里连飞书  
-2. 双击 `feishu-connect.bat`（或 `bash scripts/feishu-connect.sh`）  
-3. 浏览器里点「同意」  
-4. 再让 Agent 执行 `node scripts/feishu-export.js ...`
+**B. 已用 `feishu-connect.bat`，登录的是位道科技账号（如张明静）仍无权限**  
+→ **飞书管理员未开放应用可用范围**，用户自己解决不了。
 
-### 2. 点了同意还是失败 / 仍然无权限
+请把 **`FEISHU-ADMIN.md`** 发给公司飞书管理员，并附上诊断结果：
+
+```bash
+node scripts/feishu-diagnose.js
+```
+
+管理员按文档把「可用范围」改为 **全部员工** 并 **发布应用** 后，你再运行 `feishu-connect.bat`。
+
+**如何确认走的是本仓库应用？**  
+浏览器地址栏应包含 `client_id=cli_…`（与诊断脚本打印的 App ID 一致）。若没有，说明仍走了 Hermes 内置飞书。
+
+### 2. 点了同意还是失败 / 仍然无权限（旧条目合并见上）
 
 **原因**：飞书管理员还没把你加进应用的「可用范围」。
 
-**解决**：把下面这段话发给公司飞书管理员：
+**解决**：把 **`FEISHU-ADMIN.md`** 发给飞书管理员（比下面话术更完整）。简要话术：
 
 ```
 请帮我在飞书开放平台打开「Vidau Market Agent / agent飞书认证」应用：
@@ -157,8 +167,9 @@ node scripts/feishu-auth.js --logout
 feishu-connect.bat                    # Windows 双击
 bash scripts/feishu-connect.sh        # Mac/Linux
 
-# 查看状态
+# 查看状态 / 诊断
 node scripts/feishu-auth.js --status
+node scripts/feishu-diagnose.js
 
 # 导出（带图表）
 node scripts/feishu-export.js output/报告.md "标题" --charts
@@ -180,5 +191,5 @@ npm run feishu:export -- output/报告.md "标题" -- --charts
 
 1. 确认已 `git pull` 到最新版  
 2. 确认 `setup.bat` 已跑过（有 `node_modules`）  
-3. 把终端完整报错截图发给 **Vidau 技术支持 / 飞书管理员**  
+3. 把 `node scripts/feishu-diagnose.js` 输出 + 无权限截图发给飞书管理员（见 `FEISHU-ADMIN.md`）
 4. 附上 `node scripts/feishu-auth.js --status` 的输出

@@ -45,7 +45,8 @@ node scripts/feishu-export.js output/报告.md "标题" --charts
 
 1. 关闭页面，不要在 Hermes 设置里连飞书  
 2. 改用 `feishu-connect.bat` / `feishu-connect.sh`  
-3. 若仍失败 → 联系飞书管理员将你加入应用「可用范围」（见 `FEISHU-USER-GUIDE.md` 可复制话术）
+3. 若仍失败 → 联系飞书管理员将你加入应用「可用范围」（见 `FEISHU-USER-GUIDE.md` 可复制话术）  
+4. **管理员完整清单**：[`FEISHU-ADMIN.md`](FEISHU-ADMIN.md)
 
 ### 管理员维护飞书应用（一次性）
 

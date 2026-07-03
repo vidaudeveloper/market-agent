@@ -10,6 +10,7 @@
 
 const {
   loadEnv,
+  getFeishuAppId,
   getUserAuthStatus,
   deleteUserAuth,
   runOAuthFlow,
@@ -51,6 +52,10 @@ const {
 
   try {
     console.log('🚀 启动飞书 OAuth 授权…');
+    const appId = getFeishuAppId(env);
+    console.log('   应用 ID:', appId);
+    console.log('   授权页地址栏应包含 client_id=' + appId);
+    console.log('   若页面显示无权限且你是位道科技员工 → 请管理员按 FEISHU-ADMIN.md 放开可用范围');
     console.log('   请在浏览器中点击「同意授权」');
     const saved = await runOAuthFlow(env);
     console.log('\n✅ 飞书授权成功!');

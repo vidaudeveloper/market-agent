@@ -1025,6 +1025,8 @@ module.exports = {
   ROOT,
   USER_AUTH_FILE,
   loadEnv,
+  getFeishuAppId,
+  getFeishuAppSecret,
   getRedirectUri,
   readUserAuth,
   writeUserAuth,

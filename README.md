@@ -122,7 +122,7 @@ npm run feishu:export -- output/report.md "标题"
 | 8787 端口被占用 | 关闭其他授权窗口；脚本会自动尝试释放端口 |
 | 文档进谁的飞书？ | OAuth 授权时登录的飞书账号 |
 | 换电脑 | 新电脑需重新授权一次 |
-| 出现「没有 access to agent飞书认证」 | **勿用 Hermes 内置飞书**；双击 `feishu-connect.bat` 重新授权，详见 `FEISHU-USER-GUIDE.md` |
+| 出现「没有 access to agent飞书认证」 | 勿用 Hermes 内置飞书；`feishu-connect.bat`；位道科技员工仍无权限 → **管理员看 `FEISHU-ADMIN.md`** |
 | 每次新建文档？ | 是，当前每次导出创建新飞书文档 |
 | 导出后能编辑吗？ | 是，导出后自动转移所有权；若仍不可编辑请重新 OAuth 授权 |
 
