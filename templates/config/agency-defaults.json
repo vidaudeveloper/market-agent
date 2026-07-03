@@ -1,0 +1,17 @@
+{
+  "agency_name": "Vidau",
+  "agency_display": "Vidau",
+  "sign_off": "祝商祺！",
+  "system_wiki_url": "",
+  "case_links": {
+    "3c": "",
+    "hardware_auto": "",
+    "creator_directory": ""
+  },
+  "pricing_tiers": {
+    "basic": { "label": "基础版", "monthly_fee_usd": 1500 },
+    "standard": { "label": "标准版（推荐）", "monthly_fee_usd": 2800 },
+    "premium": { "label": "全案版", "monthly_fee_usd": 4200 }
+  },
+  "_note": "所有对外交付文档的服务商署名必须为 Vidau。case_links / system_wiki_url 待补充 Vidau 官方链接。"
+}

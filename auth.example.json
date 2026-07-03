@@ -1,0 +1,12 @@
+{
+  "cookies": {
+    "auth_session": "从浏览器 Cookies 复制这个值（HttpOnly cookie，document.cookie 读不到）",
+    "user_timezone": "Etc/GMT-8",
+    "_ga": "GA1.1.xxxxx",
+    "_c_WBKFRo": "xxxxx",
+    "_ga_W7VQ148GPW": "GS2.1.xxxxx"
+  },
+  "localStorage": {
+    "_l_KPLiPs": "从浏览器 Local Storage 复制这个值"
+  }
+}

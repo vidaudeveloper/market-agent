@@ -1,0 +1,13 @@
+{
+  "export": {
+    "feishu": true,
+    "charts": true,
+    "auto_after_report": true,
+    "skip_flag": "--no-feishu"
+  },
+  "feishu": {
+    "title_suffix": "",
+    "folder_token_env": "FEISHU_DEFAULT_FOLDER_TOKEN"
+  },
+  "_note": "报告写入 output/ 后，Agent 默认执行 feishu-export --charts。用户说「不要飞书」或传 --no-feishu 时跳过。"
+}

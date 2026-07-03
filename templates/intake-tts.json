@@ -1,0 +1,29 @@
+{
+  "brand_name": "",
+  "agency_name": "Vidau",
+  "amazon_product_url": "",
+  "amazon_store_url": "",
+  "tiktok_shop_url": "",
+  "tiktok_shop_stage": "冷启动|第二阶段|放量期",
+  "region": "US",
+  "category": "",
+  "hero_sku": "",
+  "asp_usd": 700,
+  "annual_gmv_target_usd": 5000000,
+  "launch_month": "2026-06",
+  "plan_horizon_days": 90,
+  "monthly_ad_budget_usd": "",
+  "monthly_service_fee_usd": "",
+  "inventory_sku_count": "",
+  "competitor_keywords": ["electric trike", "adult electric bike"],
+  "competitor_shop_names": [],
+  "deliverables": {
+    "bgc_videos_90d": 180,
+    "creator_videos_90d": 180,
+    "live_hours_90d": "100-300"
+  },
+  "reference_links": {
+    "agency_system_wiki": "",
+    "case_studies": []
+  }
+}

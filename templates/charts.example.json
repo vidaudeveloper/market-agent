@@ -1,0 +1,31 @@
+[
+  {
+    "title": "社媒平台触达对比",
+    "tableIndex": 0,
+    "imageBlockId": "",
+    "output": "social-radar.png",
+    "chart": {
+      "type": "radar",
+      "forFeishu": true,
+      "title": "社媒平台触达对比",
+      "labels": "曝光,互动率,转化,内容成本,KOL配合度",
+      "multi": [
+        "TikTok:90,85,70,60,75",
+        "Instagram:75,80,65,70,80",
+        "YouTube:60,70,55,80,65"
+      ]
+    }
+  },
+  {
+    "title": "月度营销预算分配 (USD)",
+    "afterBlockId": "",
+    "output": "budget-bar.png",
+    "chart": {
+      "type": "bar",
+      "forFeishu": true,
+      "title": "月度营销预算分配 (USD)",
+      "labels": "Amazon PPC,KOL,Vine,A+Content,Deal站,Google,应急",
+      "data": "8000,5000,1500,1000,2000,1500,1000"
+    }
+  }
+]

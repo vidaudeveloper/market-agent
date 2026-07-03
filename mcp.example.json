@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "trends-mcp": {
+      "command": "npx",
+      "args": ["-y", "@trendsmcp/trends-mcp"],
+      "env": {
+        "TRENDS_API_KEY": "your-trends-api-key"
+      }
+    },
+    "lighthouse": {
+      "command": "npx",
+      "args": ["-y", "@danielsogl/lighthouse-mcp-server"]
+    },
+    "seo-crawler": {
+      "command": "npx",
+      "args": ["-y", "@houtini/seo-crawler-mcp"]
+    },
+    "serper": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-serper"],
+      "env": {
+        "SERPER_API_KEY": "your-serper-api-key"
+      }
+    },
+    "social-media": {
+      "command": "npx",
+      "args": ["-y", "social-media-mcp"]
+    }
+  }
+}

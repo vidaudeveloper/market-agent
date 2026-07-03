@@ -1,0 +1,9 @@
+# 实战案例参考文档（飞书读取列表）
+# 用法: node scripts/feishu-read-doc.js --batch templates/feishu-reference-urls.txt
+# 注意: 第一条链接当前解析为「紫晶海外社媒调研」，Vanson 运营测算见第二条
+
+https://lcn07j41lnab.feishu.cn/docx/FONedcmT3oEOe7xGEBDcE6BJnbe
+https://lcn07j41lnab.feishu.cn/docx/Pz7Wdml4JoT7I3x5dg2ceiBYn3a
+https://limv19gmp8.feishu.cn/wiki/RimswNE6Die9eQkB6TicYjBnnjg
+https://limv19gmp8.feishu.cn/wiki/RBogwqUztigbmSkx1rechkKYnMd
+https://limv19gmp8.feishu.cn/wiki/ZVLmwNOBCiaa8KkyvWfcNqY8ngb
