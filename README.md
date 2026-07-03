@@ -4,6 +4,8 @@
 
 **仓库：** [github.com/vidaudeveloper/market-agent](https://github.com/vidaudeveloper/market-agent)
 
+**Hermes / Agent 一键安装：** 复制 [`INSTALL-PROMPT.md`](INSTALL-PROMPT.md) 里的英文提示词发给 Agent。
+
 把这个文件夹放进 Cursor / WorkBuddy / Hermes 等 AI 助手中，即可获得完整的市场营销全案工作台。AI 会读取 `skills/` 技能库，执行品牌分析、竞品调研、SEO 审计、广告创意、上市策划、**飞书文档导出**等任务。
 
 ---
