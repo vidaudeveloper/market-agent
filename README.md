@@ -1,8 +1,8 @@
-# AI营销全案策划师
+# AI营销全案策划师（Vidau Market Agent）
 
 > **10 分钟上手，一个文件夹搞定全链路营销分析与方案交付**
 
-**项目路径：** `D:\AAA-agent\AI营销全案策划师`
+**仓库：** [github.com/vidaudeveloper/market-agent](https://github.com/vidaudeveloper/market-agent)
 
 把这个文件夹放进 Cursor / WorkBuddy / Hermes 等 AI 助手中，即可获得完整的市场营销全案工作台。AI 会读取 `skills/` 技能库，执行品牌分析、竞品调研、SEO 审计、广告创意、上市策划、**飞书文档导出**等任务。
 
