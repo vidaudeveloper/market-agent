@@ -37,6 +37,11 @@ function requireApiKey(env) {
   return apiKey;
 }
 
+function hasApiKey(env) {
+  const apiKey = (env || loadEnv()).AI_API_KEY;
+  return !!(apiKey && apiKey !== 'sk-your-api-key-here' && apiKey !== '在此填入你的API密钥');
+}
+
 function slugify(text) {
   return String(text || 'chart')
     .trim()
@@ -117,6 +122,7 @@ module.exports = {
   ROOT,
   loadEnv,
   requireApiKey,
+  hasApiKey,
   slugify,
   generateImage,
   saveImageBuffer

@@ -136,8 +136,8 @@ node scripts/chart-gen.js --preset channel-bar --data "1050,1380,720,580" --titl
 
 | 事项 | 说明 |
 |------|------|
-| 引擎 | QuickChart 默认；失败可 `--fallback-ai` 或 export 时自动回退 |
-| 依赖 | `quickchart-js`；AI 备选需 `AI_API_KEY` |
+| 引擎 | **QuickChart 默认（无需 AI_API_KEY）**；`--charts-ai` 或失败回退才需 Key |
+| 依赖 | `quickchart-js`（npm install 已装） |
 | 标记位置 | 必须在表格**紧上方**（中间可空一行） |
 | 数据来源 | 图表须基于报告表格真实数据，禁止编造 |
 | 量级差异 | 折线图多列数值差 **≥15 倍**（如 GMV vs 订单）时自动 **双 Y 轴 + 柱+线组合**（左柱右线，避免两线重合）；`合计/总计` 行自动排除 |

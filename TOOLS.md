@@ -1,6 +1,6 @@
 # 工具目录 TOOLS.md — AI营销全案策划师
 
-> 项目路径：`D:\AAA-agent\AI营销全案策划师` · 用户说明见 `README.md` · Agent 规则见 `AGENT.md`
+> 项目路径：见本仓库根目录 · 用户说明见 `README.md` · **Agent 配置边界见 `AGENT.md`（勿向用户索要 AI_API_KEY）**
 
 ## 技能类（AI 读取 skills/ 目录自动执行）
 
@@ -51,9 +51,9 @@
 | 脚本 | 功能 | 命令示例 |
 |------|------|----------|
 | `chuhaijiang-fetch.js` | 出海匠数据抓取 | `node scripts/chuhaijiang-fetch.js shop-ranking` |
-| `ai-analyze.js` | 调用 AI API 分析文本 | `node scripts/ai-analyze.js "分析这段文案"` |
-| `chart-gen.js` | QuickChart 图表 PNG | `node scripts/chart-gen.js --type radar --title "社媒触达" --labels "曝光,互动" --multi "TikTok:90,85"` |
-| `chart-markdown.js` | Markdown `<!-- chart -->` 按需出图 | `node scripts/chart-markdown.js output/report.md` |
+| `ai-analyze.js` | 调用 AI API 分析文本（**需 `.env` 中 AI_API_KEY**） | `node scripts/ai-analyze.js "分析这段文案"` |
+| `chart-gen.js` | QuickChart 图表 PNG（**无需 AI_API_KEY**） | `node scripts/chart-gen.js --type radar ...` |
+| `chart-markdown.js` | Markdown `<!-- chart -->` → QuickChart（**无需 AI_API_KEY**） | `node scripts/chart-markdown.js output/report.md` |
 | `ai-chart.js` | 兼容入口（转发 chart-markdown） | `node scripts/ai-chart.js output/report.md` |
 | `feishu-insert-charts.js` | 已有飞书文档按需插图 | `node scripts/feishu-insert-charts.js --doc <id> --markdown output/report.md` |
 | `feishu-read-doc.js` | 读取飞书 docx/wiki → Markdown | `node scripts/feishu-read-doc.js --url "https://...feishu.cn/docx/..."` |

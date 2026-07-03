@@ -59,13 +59,18 @@ node scripts/feishu-export.js output/报告.md "标题"
 
 ## 前置条件
 
-### 管理员已配置（`.env`，用户无需填写 Secret）
+### 管理员已配置（`.env`，克隆仓库后通常已有）
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
 - `FEISHU_REDIRECT_URI`（默认 `http://localhost:8787/api/auth/feishu/callback`）
-- `AI_API_KEY` + `AI_BASE_URL`（图表功能必填）
-- `AI_IMAGE_MODEL=gpt-image-2`（可选，默认 gpt-image-2）
+
+**不需要**为常规导出配置 `AI_API_KEY`：`--charts` 默认用 **QuickChart**（无需 API Key）。
+
+### 可选（仅特殊场景）
+
+- `AI_API_KEY` + `AI_BASE_URL` — 仅 `--charts-ai`、QuickChart 失败回退、或 `ai-analyze.js`
+- `AI_IMAGE_MODEL=gpt-image-2`（AI 生图时用）
 
 ### 飞书开放平台（管理员做一次）
 
@@ -226,7 +231,8 @@ node scripts/feishu-export.js output/报告.md "标题" --charts
 node scripts/feishu-export.js output/报告.md "标题" --charts-ai   # 强制 AI 生图
 ```
 
-- 默认 QuickChart（秒级）；失败时自动回退 AI（需 `AI_API_KEY`）
+- 默认 **QuickChart**（秒级，**无需 AI_API_KEY**）
+- 仅 `--charts-ai` 或 QuickChart 失败且开启 AI 回退时才需要 `AI_API_KEY`
 - PNG 保存在 `output/charts/`
 - 图表插入到**对应表格下方**，表格保留
 
@@ -241,7 +247,7 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 | 限制 | 说明 |
 |------|------|
 | 单段块数上限 | 超过 1000 块会报错，需缩短表格或拆分报告 |
-| 图表引擎 | QuickChart 默认（秒级）；`--charts-ai` 或 AI 回退需 `AI_API_KEY` |
+| 图表引擎 | **QuickChart 默认，无需 AI_API_KEY**；`--charts-ai` 或 AI 回退才需要 Key |
 | 环境要求 | 须本机可运行 Node、可开浏览器、可监听 8787 端口 |
 | 换电脑 | 新电脑需重新 `feishu-auth.js` 授权 |
 | 文档归属 | 导出后自动转移给 OAuth 授权用户，默认可编辑 |

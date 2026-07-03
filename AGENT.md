@@ -11,6 +11,18 @@
 
 **TTS/跨境全案须先读 `skills/DELIVERY-STANDARD.md`，再按文档类型选 skill。对外文档服务商署名固定为 Vidau（见 `templates/config/agency-defaults.json`）。**
 
+## 配置要求（Agent 必读 — 勿误导用户填 Key）
+
+| 场景 | 需要 `AI_API_KEY`？ | 需要飞书 `.env`？ | 需要用户本机 OAuth？ |
+|------|---------------------|-------------------|----------------------|
+| Hermes / Cursor / Vidau **对话写报告** | **否**（用 Agent 自带大模型） | 否 | 否 |
+| `feishu-export` + `--charts`（QuickChart 插图） | **否** | 是（仓库 `.env` 已含飞书应用） | 是（首次 `feishu-auth`） |
+| `node scripts/ai-analyze.js` | **是** | 否 | 否 |
+| `--charts-ai` 或 QuickChart 失败回退 AI 生图 | **是** | 否 | 否 |
+| 出海匠 `chuhaijiang-fetch.js` | 否 | 否 | 否（需 `auth.json` Cookie） |
+
+**禁止**在写报告、导出飞书、QuickChart 出图时提示用户「请填写 AI_API_KEY」。仅当用户明确要用 `ai-analyze.js` 或 `--charts-ai` 且 `.env` 中 Key 为空时再说明可选配置。
+
 你拥有以下能力：
 
 ### 1. 营销分析技能（skills/ 目录）
@@ -193,5 +205,6 @@
 
 - Node.js 18+
 - Playwright（通过 `npm install` 自动安装）
-- AI API Key（在 `.env` 中配置）
+- **飞书导出**：`.env` 中飞书应用凭证（仓库已预配）+ 用户本机 OAuth
+- **AI_API_KEY**：仅 `ai-analyze.js` / `--charts-ai` / QuickChart 失败回退时需要；**Hermes 写报告与默认 `--charts` 不需要**
 - 出海匠账号（可选，用于 TikTok 数据查询）

@@ -20,23 +20,24 @@
 
 > 仅需 Node.js 18+，无需数据库、无需部署。
 
-### 2️⃣ 填写配置（管理员预配）
+### 2️⃣ 配置说明（多数用户无需填 Key）
 
-> **完整说明见 [`ENV_SETUP.md`](ENV_SETUP.md)** — 发给其他用户前，由管理员在 `.env` 中填好 Key，用户无需自己申请。
+> 详见 [`ENV_SETUP.md`](ENV_SETUP.md)
 
-| 配置项 | 谁填 | 必填场景 |
-|--------|------|----------|
-| `AI_API_KEY` + `AI_BASE_URL` + `AI_MODEL` | **管理员** | 脚本 AI 分析 / 部分深度生成 |
-| `FEISHU_APP_ID` + `FEISHU_APP_SECRET` | **管理员** | 导出飞书 |
-| `FEISHU_REDIRECT_URI` | 固定 | `http://localhost:8787/api/auth/feishu/callback` |
-| 飞书 OAuth 点「同意」 | **各用户本机一次** | 导出到自己的飞书 |
-| `auth.json` | 各用户 | 仅查出海匠时需要 |
+| 配置项 | 谁需要填 | 何时需要 |
+|--------|----------|----------|
+| **无**（用 Hermes/Agent 写报告） | 普通用户 | 直接对话即可，**不要填 AI_API_KEY** |
+| 飞书 OAuth「同意」 | 各用户本机一次 | 首次导出飞书时浏览器授权 |
+| `FEISHU_APP_ID` / `SECRET` | 管理员 | 已在仓库 `.env` 预配，用户不用填 |
+| `AI_API_KEY` | 管理员（可选） | 仅 `ai-analyze.js` 或 `--charts-ai` 时需要 |
+| `auth.json` | 各用户 | 仅查出海匠 TikTok 数据时 |
 
-复制模板并预配：
+克隆仓库后若已有 `.env`，**跳过复制模板**，直接 `npm install` 即可。
 
 ```bash
-copy .env.example .env
-# 编辑 .env，填入 AI_API_KEY、FEISHU_APP_ID、FEISHU_APP_SECRET
+git clone https://github.com/vidaudeveloper/market-agent.git
+cd market-agent
+npm install   # 或双击 setup.bat
 ```
 
 ### 3️⃣ 在 Cursor 中打开本文件夹
@@ -68,7 +69,7 @@ D:\AAA-agent\AI营销全案策划师
    http://127.0.0.1:8787/api/auth/feishu/callback
    ```
 3. 开通权限：`docx:document:create`、`drive:drive`、`docx:document.block:convert` 等  
-4. 在本项目 `.env` 填入 `FEISHU_APP_ID` / `FEISHU_APP_SECRET`
+4. 仓库 `.env` 已含飞书凭证；用户首次导出时浏览器 OAuth 即可
 
 ### 用户使用（每人本机授权一次）
 
@@ -154,7 +155,8 @@ D:\AAA-agent\AI营销全案策划师\
 ├── README.md              ← 本说明（给人看）
 ├── AGENT.md               ← AI 工作流程（给 Agent 看）
 ├── TOOLS.md               ← 工具目录
-├── .env / .env.example    ← API Key + 飞书配置
+├── .env                   ← 飞书应用凭证（仓库已含）；AI Key 可选
+├── .env.example           ← 配置模板
 ├── setup.bat / setup.sh   ← 一键安装
 ├── scripts/
 │   ├── feishu-auth.js     ← 飞书 OAuth（自动开浏览器）
@@ -172,12 +174,12 @@ D:\AAA-agent\AI营销全案策划师\
 
 ## 📤 分发给其他用户
 
-1. 复制整个 **`AI营销全案策划师`** 文件夹  
-2. **管理员预配好 `.env`**（含 `AI_API_KEY`、`FEISHU_APP_ID`、`FEISHU_APP_SECRET`）  
-3. 用户运行 `setup.bat`，在 Cursor 打开文件夹  
-4. 飞书导出：用户本机浏览器授权一次即可  
+1. `git clone` 或复制整个项目文件夹  
+2. 仓库 `.env` 已含飞书应用凭证，**用户无需填 AI_API_KEY**  
+3. 运行 `setup.bat` / `npm install`，在 Hermes / Cursor 打开文件夹  
+4. 飞书导出：用户本机浏览器 OAuth 一次即可  
 
-详见 **`ENV_SETUP.md`**。`.env` 勿提交 Git。
+详见 **`ENV_SETUP.md`**。`auth/feishu-user.json` 勿提交 Git。
 
 ---
 
@@ -186,8 +188,11 @@ D:\AAA-agent\AI营销全案策划师\
 **Q: 需要科学上网吗？**  
 A: 分析国内网站、飞书 OAuth、出海匠一般不需要。部分 MCP 可能需要。
 
+**Q: 需要填 AI API Key 吗？**  
+A: **用 Hermes/Agent 写报告、QuickChart 出图、导出飞书 → 不需要。** 仅运行 `ai-analyze.js` 或 `--charts-ai` 时才需要 `.env` 中的 `AI_API_KEY`。
+
 **Q: 支持哪些 AI？**  
-A: OpenAI、DeepSeek、智谱、Moonshot 等兼容 OpenAI 格式的 API。
+A: Agent 对话用 Hermes/Cursor 自带模型。可选 `AI_API_KEY` 支持 OpenAI、DeepSeek 等兼容接口（见 `ai-analyze.js`）。
 
 **Q: 可以改名/移动文件夹吗？**  
 A: 可以。在 Cursor 中重新 **Open Folder** 指向新路径即可；`.env` 和 `auth/` 会随文件夹一起带走。

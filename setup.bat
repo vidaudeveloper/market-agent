@@ -28,7 +28,7 @@ if %errorlevel% neq 0 (
 echo [3/3] 检查配置文件...
 if not exist ".env" (
     copy .env.example .env >nul
-    echo [提示] 已从 .env.example 复制 .env，请填入 AI API Key
+    echo [提示] 已从 .env.example 复制 .env；若已 git clone 且仓库含 .env 可忽略
 )
 if not exist "auth.json" (
     echo [提示] 如需出海匠数据，可复制 auth.example.json 为 auth.json
@@ -42,9 +42,11 @@ echo.
 echo 项目路径: %~dp0
 echo.
 echo 下一步:
-echo   1. 编辑 .env，填入 AI API Key
-echo   2. (可选) 配置 FEISHU_APP_ID 使用飞书导出
-echo   3. 在 Cursor 中 Open Folder 打开本目录
+echo   1. 用 Hermes/Cursor 打开本文件夹，直接对话写报告（无需 AI_API_KEY）
+echo   2. 导出飞书: node scripts/feishu-export.js output/报告.md "标题" --charts
+echo      首次会打开浏览器完成飞书 OAuth
+echo   3. (可选) 仅 ai-analyze.js 或 --charts-ai 需在 .env 填 AI_API_KEY
+echo   4. (可选) 出海匠数据: 配置 auth.json
 echo.
 echo 飞书导出:
 echo   node scripts/feishu-export.js output/报告.md "文档标题"

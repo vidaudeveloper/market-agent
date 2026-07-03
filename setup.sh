@@ -25,5 +25,8 @@ echo "========================================"
 echo "  安装完成！"
 echo "========================================"
 echo
-echo "飞书导出: node scripts/feishu-export.js output/报告.md \"标题\""
-echo "详见 README.md"
+echo "下一步:"
+echo "  1. Hermes/Cursor 打开本目录写报告（无需 AI_API_KEY）"
+echo "  2. 飞书导出: node scripts/feishu-export.js output/报告.md \"标题\" --charts"
+echo "  3. (可选) ai-analyze.js / --charts-ai 才需 .env 中 AI_API_KEY"
+echo

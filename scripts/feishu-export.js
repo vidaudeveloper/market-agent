@@ -28,6 +28,7 @@ const {
 } = require('./feishu-lib');
 const { generateChartsFromMarkdown } = require('./chart-markdown');
 const { sanitizeMarkdownForFeishu } = require('./markdown-feishu-sanitize');
+const { hasApiKey } = require('./ai-lib');
 
 const INSERT_PERMISSION_HINT =
   '写入飞书文档权限不足。请：1) 在飞书开放平台确认应用已开通 docx:document、drive:drive 等用户权限并已发布；2) 运行 node scripts/feishu-auth.js --logout 后重新授权。';
@@ -164,7 +165,7 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
     const generated = await generateChartsFromMarkdown(markdown, {
       allTables: options.allChartTables,
       engine: options.chartEngine || 'quickchart',
-      fallbackAi: options.chartFallbackAi !== false
+      fallbackAi: options.chartFallbackAi !== false && hasApiKey(env)
     });
     charts = generated.charts;
     content = generated.markdown;
@@ -242,7 +243,7 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
       withCharts: flags.has('--charts') || flags.has('--all-charts') || flags.has('--charts-ai'),
       allChartTables: flags.has('--all-charts'),
       chartEngine: flags.has('--charts-ai') ? 'ai' : 'quickchart',
-      chartFallbackAi: !flags.has('--charts-ai')
+      chartFallbackAi: !flags.has('--charts-ai') && hasApiKey(env)
     });
     console.log('\n✅ 导出成功!');
     console.log('标题:', result.title);
