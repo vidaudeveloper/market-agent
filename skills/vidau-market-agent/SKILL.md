@@ -36,7 +36,7 @@ npm install
 2. 在 Hermes 中把 **workspace / 工作目录** 设为上述 `market-agent` 根目录。
 
 3. 确认 `terminal.backend: local`（飞书 OAuth 需读写本机 `auth/feishu-user.json`）。
-4. 首次导出飞书前：引导用户运行 `feishu-connect.bat`（见 `FEISHU-USER-GUIDE.md`），**勿用 Hermes「agent飞书认证」**。
+4. 导出飞书前：用户按 `FEISHU-APP-SETUP.md` 填 `.env`，再 `feishu-connect.bat`（见 `FEISHU-USER-GUIDE.md`）；勿用 Hermes 内置飞书。
 
 ## 启动流程（每次 /vidau-market-agent）
 
@@ -53,7 +53,7 @@ npm install
 | 项 | 需要吗 |
 |----|--------|
 | `AI_API_KEY` | **否**（Agent 写报告 + QuickChart 出图） |
-| 飞书 `.env` | 仓库已含；用户仅需本机 OAuth 一次 |
+| 飞书 `.env` | 用户自建应用写入本机 `.env` + OAuth 一次 |
 | `auth.json` | 仅出海匠 TikTok 数据时需要 |
 
 **禁止**提示用户填写 `AI_API_KEY`，除非明确要求 `ai-analyze.js` 或 `--charts-ai`。

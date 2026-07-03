@@ -52,15 +52,24 @@ function loadEnv() {
 }
 
 function getFeishuAppId(env) {
-  const appId = env.FEISHU_APP_ID;
-  if (!appId) throw new Error('请在 .env 中配置 FEISHU_APP_ID');
+  const appId = (env.FEISHU_APP_ID || '').trim();
+  if (!appId) throw new Error('请在 .env 中配置 FEISHU_APP_ID（见 FEISHU-APP-SETUP.md）');
   return appId;
 }
 
 function getFeishuAppSecret(env) {
-  const appSecret = env.FEISHU_APP_SECRET;
-  if (!appSecret) throw new Error('请在 .env 中配置 FEISHU_APP_SECRET');
+  const appSecret = (env.FEISHU_APP_SECRET || '').trim();
+  if (!appSecret) throw new Error('请在 .env 中配置 FEISHU_APP_SECRET（见 FEISHU-APP-SETUP.md）');
   return appSecret;
+}
+
+function isFeishuConfigured(env) {
+  const e = env || loadEnv();
+  const id = (e.FEISHU_APP_ID || '').trim();
+  const secret = (e.FEISHU_APP_SECRET || '').trim();
+  if (!id || !secret) return false;
+  if (id.includes('在此填入') || secret.includes('在此填入')) return false;
+  return id.startsWith('cli_') && secret.length >= 8;
 }
 
 function getRedirectUri(env) {
@@ -1027,6 +1036,7 @@ module.exports = {
   loadEnv,
   getFeishuAppId,
   getFeishuAppSecret,
+  isFeishuConfigured,
   getRedirectUri,
   readUserAuth,
   writeUserAuth,

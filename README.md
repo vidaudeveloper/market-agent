@@ -22,24 +22,24 @@
 
 > 仅需 Node.js 18+，无需数据库、无需部署。
 
-### 2️⃣ 配置说明（多数用户无需填 Key）
+### 2️⃣ 配置说明
 
 > 详见 [`ENV_SETUP.md`](ENV_SETUP.md)
 
 | 配置项 | 谁需要填 | 何时需要 |
 |--------|----------|----------|
-| **无**（用 Hermes/Agent 写报告） | 普通用户 | 直接对话即可，**不要填 AI_API_KEY** |
-| 飞书 OAuth「同意」 | 各用户本机一次 | 首次导出飞书时浏览器授权 |
-| `FEISHU_APP_ID` / `SECRET` | 管理员 | 已在仓库 `.env` 预配，用户不用填 |
-| `AI_API_KEY` | 管理员（可选） | 仅 `ai-analyze.js` 或 `--charts-ai` 时需要 |
-| `auth.json` | 各用户 | 仅查出海匠 TikTok 数据时 |
-
-克隆仓库后若已有 `.env`，**跳过复制模板**，直接 `npm install` 即可。
+| **无**（用 Hermes/Agent 写报告） | 普通用户 | 直接对话，**不要填 AI_API_KEY** |
+| `FEISHU_APP_ID` / `SECRET` | **各用户/团队** | 导出飞书前，按 [`FEISHU-APP-SETUP.md`](FEISHU-APP-SETUP.md) 自建应用并写入本机 `.env` |
+| 飞书 OAuth「同意」 | 各用户本机一次 | `feishu-connect.bat` 浏览器授权 |
+| `AI_API_KEY` | 可选 | 仅 `ai-analyze.js` 或 `--charts-ai` |
+| `auth.json` | 各用户 | 仅出海匠 TikTok 数据 |
 
 ```bash
 git clone https://github.com/vidaudeveloper/market-agent.git
 cd market-agent
-npm install   # 或双击 setup.bat
+cp .env.example .env    # Windows: copy .env.example .env
+npm install             # 或双击 setup.bat
+# 导出飞书前：按 FEISHU-APP-SETUP.md 填写 .env
 ```
 
 ### 3️⃣ 在 Cursor 中打开本文件夹
@@ -58,61 +58,19 @@ D:\AAA-agent\AI营销全案策划师
 
 ---
 
-## 📤 飞书导出（浏览器 OAuth，无需 Web 页面）
+## 📤 飞书导出
 
-> **普通用户请看 [`FEISHU-USER-GUIDE.md`](FEISHU-USER-GUIDE.md)**（3 步上手，含「agent飞书认证」排障）
+> [`FEISHU-APP-SETUP.md`](FEISHU-APP-SETUP.md) 创建应用 → [`FEISHU-USER-GUIDE.md`](FEISHU-USER-GUIDE.md) 连接与导出
 
-将 `output/` 中的 Markdown 报告导出到**当前用户自己的飞书云文档**。
+将 `output/` 报告导出到**授权用户自己的飞书云文档**。`.env` **不进 Git**，每人用自己企业的自建应用。
 
-**不要用 Hermes 内置「agent飞书认证」**；请用本仓库脚本。
+### 流程
 
-### 用户第一次连接（推荐）
+1. `copy .env.example .env` 并填入 `FEISHU_APP_ID` / `SECRET`（见 `FEISHU-APP-SETUP.md`）
+2. 双击 **`feishu-connect.bat`**（或 `bash scripts/feishu-connect.sh`）浏览器授权
+3. `node scripts/feishu-export.js output/报告.md "标题" --charts`
 
-| 系统 | 操作 |
-|------|------|
-| **Windows** | 双击 **`feishu-connect.bat`** |
-| **Mac / Linux** | `bash scripts/feishu-connect.sh` |
-
-浏览器点「同意」后，再导出报告。
-
-### 工具提供方配置（做一次，全员共用）
-
-1. [飞书开放平台](https://open.feishu.cn/) 创建/使用应用  
-2. **安全设置 → 重定向 URL** 添加：
-   ```
-   http://localhost:8787/api/auth/feishu/callback
-   http://127.0.0.1:8787/api/auth/feishu/callback
-   ```
-3. 开通权限：`docx:document:create`、`drive:drive`、`docx:document.block:convert` 等  
-4. 仓库 `.env` 已含飞书凭证；用户首次导出时浏览器 OAuth 即可
-
-### 用户使用（每人本机授权一次）
-
-**推荐：导出时自动授权**
-
-```bash
-cd D:\AAA-agent\AI营销全案策划师
-node scripts/feishu-export.js output/你的报告.md "文档标题"
-```
-
-- 首次运行 → **自动打开浏览器** → 飞书页点「同意」  
-- 凭证保存在本机 `auth/feishu-user.json`（勿提交 git）  
-- 文档进入**授权账号自己的飞书**
-
-**手动授权：**
-
-```bash
-node scripts/feishu-auth.js           # 连接飞书
-node scripts/feishu-auth.js --status  # 查看状态
-node scripts/feishu-auth.js --logout  # 断开
-```
-
-**npm 快捷命令：**
-
-```bash
-npm run feishu:auth
-npm run feishu:export -- output/report.md "标题"
-```
+勿用 Hermes 内置飞书插件。
 
 ### 飞书常见问题
 
@@ -121,9 +79,9 @@ npm run feishu:export -- output/report.md "标题"
 | 20029 重定向 URL 有误 | 检查飞书后台 8787 回调是否已添加并发布应用 |
 | 8787 端口被占用 | 关闭其他授权窗口；脚本会自动尝试释放端口 |
 | 文档进谁的飞书？ | OAuth 授权时登录的飞书账号 |
-| 换电脑 | 新电脑需重新授权一次 |
-| 出现「没有 access to agent飞书认证」 | 勿用 Hermes 内置飞书；`feishu-connect.bat`；位道科技员工仍无权限 → **管理员看 `FEISHU-ADMIN.md`** |
-| 每次新建文档？ | 是，当前每次导出创建新飞书文档 |
+| 换电脑 | 新电脑重新 `feishu-connect`；`.env` 可拷贝 |
+| 无使用权限 | 应用未发布或可用范围不含你 → `FEISHU-APP-SETUP.md` |
+| 未配置应用 | `node scripts/feishu-diagnose.js` 检查 `.env` |
 | 导出后能编辑吗？ | 是，导出后自动转移所有权；若仍不可编辑请重新 OAuth 授权 |
 
 ---
@@ -171,8 +129,10 @@ D:\AAA-agent\AI营销全案策划师\
 ├── README.md              ← 本说明（给人看）
 ├── AGENT.md               ← AI 工作流程（给 Agent 看）
 ├── TOOLS.md               ← 工具目录
-├── .env                   ← 飞书应用凭证（仓库已含）；AI Key 可选
+├── .env                   ← 本机配置（勿提交 Git）；飞书应用自填
 ├── .env.example           ← 配置模板
+├── FEISHU-APP-SETUP.md    ← 创建飞书自建应用
+├── FEISHU-USER-GUIDE.md   ← 连接与导出
 ├── setup.bat / setup.sh   ← 一键安装
 ├── scripts/
 │   ├── feishu-auth.js     ← 飞书 OAuth（自动开浏览器）
@@ -191,7 +151,7 @@ D:\AAA-agent\AI营销全案策划师\
 ## 📤 分发给其他用户
 
 1. `git clone` 或复制整个项目文件夹  
-2. 仓库 `.env` 已含飞书应用凭证，**用户无需填 AI_API_KEY**  
+2. 导出飞书前在本机 `.env` 配置自建应用（见 `FEISHU-APP-SETUP.md`）；**写报告无需 AI_API_KEY**  
 3. 运行 `setup.bat` / `npm install`，在 Hermes / Cursor 打开文件夹  
 4. 飞书导出：用户本机浏览器 OAuth 一次即可  
 

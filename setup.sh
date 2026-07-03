@@ -19,6 +19,7 @@ npx playwright install chromium || echo "[警告] Playwright 安装失败"
 
 echo "[3/3] 检查配置文件..."
 [ ! -f .env ] && cp .env.example .env && echo "[提示] 已复制 .env.example → .env"
+echo "[重要] 导出飞书前请在 .env 填入你自己的飞书应用（见 FEISHU-APP-SETUP.md）"
 
 echo
 echo "========================================"
@@ -27,8 +28,8 @@ echo "========================================"
 echo
 echo "下一步:"
 echo "  1. Hermes/Cursor 打开本目录写报告（无需 AI_API_KEY）"
-echo "  2. 连接飞书: bash scripts/feishu-connect.sh（首次每人做一次）"
-echo "  3. 飞书导出: node scripts/feishu-export.js output/报告.md \"标题\" --charts"
-echo "  4. (可选) ai-analyze.js / --charts-ai 才需 .env 中 AI_API_KEY"
-echo "  飞书用户指南: FEISHU-USER-GUIDE.md"
+echo "  2. 飞书: 按 FEISHU-APP-SETUP.md 创建应用并填入 .env"
+echo "  3. bash scripts/feishu-connect.sh 连接飞书"
+echo "  4. node scripts/feishu-export.js output/报告.md \"标题\" --charts"
+echo "  飞书: FEISHU-APP-SETUP.md | FEISHU-USER-GUIDE.md"
 echo

@@ -16,7 +16,7 @@
 | 场景 | 需要 `AI_API_KEY`？ | 需要飞书 `.env`？ | 需要用户本机 OAuth？ |
 |------|---------------------|-------------------|----------------------|
 | Hermes / Cursor / Vidau **对话写报告** | **否**（用 Agent 自带大模型） | 否 | 否 |
-| `feishu-export` + `--charts`（QuickChart 插图） | **否** | 是（仓库 `.env` 已含飞书应用） | 是（首次 `feishu-auth`） |
+| `feishu-export` + `--charts`（QuickChart 插图） | **否** | 是（用户自填 `.env`） | 是（首次 `feishu-auth`） |
 | `node scripts/ai-analyze.js` | **是** | 否 | 否 |
 | `--charts-ai` 或 QuickChart 失败回退 AI 生图 | **是** | 否 | 否 |
 | 出海匠 `chuhaijiang-fetch.js` | 否 | 否 | 否（需 `auth.json` Cookie） |
@@ -52,13 +52,13 @@
 
 **完整流程见 `skills/feishu-export/SKILL.md`**；**普通用户图文见 `FEISHU-USER-GUIDE.md`**。
 
-**禁止**使用 Hermes 内置「agent飞书认证」。首次连接请引导用户运行 `feishu-connect.bat`（Windows）或 `bash scripts/feishu-connect.sh`。
+**禁止**使用 Hermes 内置飞书插件。导出前确认用户已按 **`FEISHU-APP-SETUP.md`** 在 `.env` 配置自建应用；首次连接运行 `feishu-connect.bat`（Windows）或 `bash scripts/feishu-connect.sh`。
 
 **无需 Web 设置页**：首次导出时自动打开浏览器完成飞书 OAuth 授权。
 
 #### 前置条件
 
-- `.env` 中配置 `FEISHU_APP_ID` 和 `FEISHU_APP_SECRET`（由工具提供方维护，用户不在聊天中填写 Secret）
+- 用户在本机 `.env` 配置 `FEISHU_APP_ID` 和 `FEISHU_APP_SECRET`（见 `FEISHU-APP-SETUP.md`；勿在对话中粘贴 Secret）
 - 飞书应用重定向 URL 已添加：`http://localhost:8787/api/auth/feishu/callback` 与 `http://127.0.0.1:8787/api/auth/feishu/callback`
 
 #### 当用户说「导出到飞书」「导出飞书文档」时
@@ -209,6 +209,6 @@
 
 - Node.js 18+
 - Playwright（通过 `npm install` 自动安装）
-- **飞书导出**：`.env` 中飞书应用凭证（仓库已预配）+ 用户本机 OAuth
+- **飞书导出**：用户自填 `.env` 飞书应用 + 本机 OAuth（`FEISHU-APP-SETUP.md`）
 - **AI_API_KEY**：仅 `ai-analyze.js` / `--charts-ai` / QuickChart 失败回退时需要；**Hermes 写报告与默认 `--charts` 不需要**
 - 出海匠账号（可选，用于 TikTok 数据查询）

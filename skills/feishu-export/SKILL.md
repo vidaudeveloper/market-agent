@@ -5,8 +5,9 @@ description: "飞书文档导出。触发词：导出飞书、飞书文档、导
 
 # 飞书文档导出 / Feishu Doc Export
 
-> **普通用户 3 步指南：[`FEISHU-USER-GUIDE.md`](../../FEISHU-USER-GUIDE.md)**  
-> 首次连接：Windows 双击 `feishu-connect.bat` / Mac·Linux `bash scripts/feishu-connect.sh`
+> **普通用户**：[`FEISHU-USER-GUIDE.md`](../../FEISHU-USER-GUIDE.md)  
+> **自建飞书应用**：[`FEISHU-APP-SETUP.md`](../../FEISHU-APP-SETUP.md)  
+> 首次连接：Windows `feishu-connect.bat` / Mac·Linux `bash scripts/feishu-connect.sh`
 
 ## 触发方式
 
@@ -32,12 +33,12 @@ description: "飞书文档导出。触发词：导出飞书、飞书文档、导
 
 ## Hermes 桌面端必读（避免文档不可编辑）
 
-**禁止**使用 Hermes 内置飞书工具/插件（如「agent飞书认证」、Feishu MCP 等）导出本项目的 Markdown 报告。
+**禁止**使用 Hermes 内置飞书工具/插件导出本项目的 Markdown 报告。
 
 | 导出方式 | 文档所有者 | 能否编辑 |
 |----------|------------|----------|
 | `node scripts/feishu-export.js`（本 skill） | 你的飞书账号 | ✅ 可编辑 |
-| Hermes 内置「agent飞书认证」等 | 应用/机器人 | ❌ 通常只读 |
+| Hermes 内置飞书插件 | 应用/机器人 | ❌ 通常只读 |
 
 **必须**用 `terminal` 工具在本机项目根目录执行：
 
@@ -62,29 +63,24 @@ node scripts/feishu-export.js output/报告.md "标题"
 
 ## 前置条件
 
-### 管理员已配置（`.env`，克隆仓库后通常已有）
+### 用户在本机 `.env` 配置飞书应用（见 `FEISHU-APP-SETUP.md`）
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
 - `FEISHU_REDIRECT_URI`（默认 `http://localhost:8787/api/auth/feishu/callback`）
 
-**不需要**为常规导出配置 `AI_API_KEY`：`--charts` 默认用 **QuickChart**（无需 API Key）。
+`.env` **不进 Git**。导出前可运行 `node scripts/feishu-diagnose.js` 检查。
+
+**不需要**为常规导出配置 `AI_API_KEY`：`--charts` 默认用 **QuickChart**。
 
 ### 可选（仅特殊场景）
 
 - `AI_API_KEY` + `AI_BASE_URL` — 仅 `--charts-ai`、QuickChart 失败回退、或 `ai-analyze.js`
 - `AI_IMAGE_MODEL=gpt-image-2`（AI 生图时用）
 
-### 飞书开放平台（管理员做一次）
+### 飞书开放平台（用户/管理员自建应用一次）
 
-重定向 URL 须包含：
-
-```
-http://localhost:8787/api/auth/feishu/callback
-http://127.0.0.1:8787/api/auth/feishu/callback
-```
-
-权限示例：`docx:document:create`、`drive:drive`、`docx:document.block:convert` 等。
+完整步骤：**`FEISHU-APP-SETUP.md`**（重定向 URL、权限、发布、可用范围）
 
 ### 用户本机授权（每人每电脑一次）
 
@@ -259,7 +255,9 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 
 | 问题 | 处理 |
 |------|------|
-| **无 access to agent飞书认证** | 用户误用 Hermes 内置飞书 → 引导 `feishu-connect.bat`，见 `FEISHU-USER-GUIDE.md` |
+| `.env` 未配置 | `FEISHU-APP-SETUP.md` + `feishu-diagnose.js` |
+| 无 OAuth 使用权限 | 应用未发布或可用范围不含用户 |
+| 误用 Hermes 内置飞书 | 改用 `feishu-connect.bat` |
 | 导出后无法编辑 | 升级脚本后重新 `feishu-auth.js --logout` 再授权；旧文档需手动转移所有者 |
 | 20029 重定向 URL 有误 | 检查飞书开放平台回调 URL 是否已添加并发布应用 |
 | 8787 端口被占用 | 关闭其他授权窗口；或 `netstat -ano \| findstr :8787` 后结束占用进程 |
@@ -268,7 +266,7 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 
 ## Agent 禁止事项
 
-- **禁止**使用 Hermes 内置飞书插件（「agent飞书认证」等）代替 `scripts/feishu-export.js`
+- **禁止**使用 Hermes 内置飞书插件代替 `scripts/feishu-export.js`
 - **禁止**在对话中让用户粘贴 `FEISHU_APP_SECRET` 或 `access_token`
 - **禁止**声称可以跳过用户 OAuth
 - **禁止**删除报告中的数据来源标注后再导出

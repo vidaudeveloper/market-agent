@@ -10,8 +10,8 @@ echo "  Vidau Market Agent - 连接飞书"
 echo "========================================"
 echo ""
 echo "说明:"
-echo "  - 不要用 Hermes 里的「agent飞书认证」按钮"
-echo "  - 本脚本会把报告导出到【你自己的】飞书账号"
+echo "  - 请先在 .env 配置你自己的飞书应用（见 FEISHU-APP-SETUP.md）"
+echo "  - 不要用 Hermes 内置飞书插件"
 echo ""
 
 if ! command -v node >/dev/null 2>&1; then
@@ -39,9 +39,10 @@ if ! node scripts/feishu-auth.js; then
   echo "  授权未成功"
   echo "========================================"
   echo ""
-  echo "若页面显示「没有 agent飞书认证 使用权限」且你是位道科技员工:"
-  echo "  → 请把 FEISHU-ADMIN.md 发给飞书管理员"
-  echo "  → 运行 node scripts/feishu-diagnose.js 把结果发给管理员"
+  echo "常见原因:"
+  echo "  1. .env 未填飞书凭证 → FEISHU-APP-SETUP.md"
+  echo "  2. 应用未发布或可用范围不含你"
+  echo "  3. 误用 Hermes 内置飞书"
   exit 1
 fi
 
@@ -59,4 +60,4 @@ echo ""
 echo "或自己运行:"
 echo "  node scripts/feishu-export.js output/报告.md \"标题\" --charts"
 echo ""
-echo "详细说明: FEISHU-USER-GUIDE.md"
+echo "详细说明: FEISHU-USER-GUIDE.md / FEISHU-APP-SETUP.md"
