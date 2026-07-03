@@ -45,15 +45,18 @@ Use Vidau Market Agent when I need:
 
 Important constraints:
 - Read skills from skills/ per AGENT.md routing; for TTS full cases start with skills/DELIVERY-STANDARD.md and skills/tts-full-case/SKILL.md
-- Feishu export MUST use: node scripts/feishu-export.js (never Hermes built-in Feishu plugins)
+- Feishu export MUST use: node scripts/feishu-export.js (NEVER Hermes built-in "agent飞书认证" or other Feishu plugins)
+- First-time Feishu connect for end users: feishu-connect.bat (Windows) or bash scripts/feishu-connect.sh (Mac/Linux)
+- User guide: https://github.com/vidaudeveloper/market-agent/blob/main/FEISHU-USER-GUIDE.md
 - Default export includes charts: node scripts/feishu-export.js output/report.md "Title" --charts
 - QuickChart charts do NOT require AI_API_KEY; do not prompt me to fill AI_API_KEY for normal report + Feishu export workflow
 - Feishu app credentials are already in the repo .env; I only need browser OAuth once per machine (auth/feishu-user.json)
+- If user sees "You don't have the access to agent飞书认证", tell them to close that page, run feishu-connect.bat instead, and NOT use Hermes Feishu settings
 
 After setup, verify in order:
 1. node -v (18+)
-2. node scripts/feishu-auth.js --status
-3. If not connected, tell me you will open Feishu OAuth in the browser when we first export
+2. Guide me to run feishu-connect.bat (or feishu-connect.sh) if feishu-auth --status shows not connected
+3. node scripts/feishu-auth.js --status
 
 Optional verification export (ask me before running if no sample report exists):
 node scripts/feishu-export.js output/飞书导出测试.md "Vidau Market Agent 安装验证" --charts
@@ -94,10 +97,11 @@ If the task needs my product links, GMV targets, Feishu OAuth, or chuhaijiang lo
 | 2 | `git clone` + `npm install` |
 | 3 | 检查 Node、飞书连接状态 |
 | 4 | **不要**索要 `AI_API_KEY`（除非要用 `ai-analyze.js`） |
-| 5 | 可选：导出测试稿到飞书验证 |
-| 6 | 运行 `install-hermes-skill.bat` / `install-hermes-skill.sh`，`/reload-skills` 后出现 `/vidau-market-agent` |
-| 7 | 浏览器打开 GitHub 仓库；登录时可问是否 star |
-| 8 | 询问第一个营销任务 |
+| 5 | 未连接飞书时引导用户运行 **`feishu-connect.bat`**（勿用 Hermes 内置飞书） |
+| 6 | 可选：导出测试稿到飞书验证 |
+| 7 | 运行 `install-hermes-skill.bat` / `install-hermes-skill.sh`，`/reload-skills` 后出现 `/vidau-market-agent` |
+| 8 | 浏览器打开 GitHub 仓库；登录时可问是否 star |
+| 9 | 询问第一个营销任务 |
 
 ---
 
@@ -112,6 +116,7 @@ If the task needs my product links, GMV targets, Feishu OAuth, or chuhaijiang lo
 | 飞书导出 Skill | https://github.com/vidaudeveloper/market-agent/blob/main/skills/feishu-export/SKILL.md |
 | TTS 全案编排 | https://github.com/vidaudeveloper/market-agent/blob/main/skills/tts-full-case/SKILL.md |
 | Hermes 斜杠技能 | https://github.com/vidaudeveloper/market-agent/blob/main/HERMES.md |
+| **飞书普通用户指南** | https://github.com/vidaudeveloper/market-agent/blob/main/FEISHU-USER-GUIDE.md |
 
 ---
 

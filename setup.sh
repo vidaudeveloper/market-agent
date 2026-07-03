@@ -27,6 +27,8 @@ echo "========================================"
 echo
 echo "下一步:"
 echo "  1. Hermes/Cursor 打开本目录写报告（无需 AI_API_KEY）"
-echo "  2. 飞书导出: node scripts/feishu-export.js output/报告.md \"标题\" --charts"
-echo "  3. (可选) ai-analyze.js / --charts-ai 才需 .env 中 AI_API_KEY"
+echo "  2. 连接飞书: bash scripts/feishu-connect.sh（首次每人做一次）"
+echo "  3. 飞书导出: node scripts/feishu-export.js output/报告.md \"标题\" --charts"
+echo "  4. (可选) ai-analyze.js / --charts-ai 才需 .env 中 AI_API_KEY"
+echo "  飞书用户指南: FEISHU-USER-GUIDE.md"
 echo

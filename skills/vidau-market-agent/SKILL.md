@@ -36,6 +36,7 @@ npm install
 2. 在 Hermes 中把 **workspace / 工作目录** 设为上述 `market-agent` 根目录。
 
 3. 确认 `terminal.backend: local`（飞书 OAuth 需读写本机 `auth/feishu-user.json`）。
+4. 首次导出飞书前：引导用户运行 `feishu-connect.bat`（见 `FEISHU-USER-GUIDE.md`），**勿用 Hermes「agent飞书认证」**。
 
 ## 启动流程（每次 /vidau-market-agent）
 

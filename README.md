@@ -60,7 +60,20 @@ D:\AAA-agent\AI营销全案策划师
 
 ## 📤 飞书导出（浏览器 OAuth，无需 Web 页面）
 
+> **普通用户请看 [`FEISHU-USER-GUIDE.md`](FEISHU-USER-GUIDE.md)**（3 步上手，含「agent飞书认证」排障）
+
 将 `output/` 中的 Markdown 报告导出到**当前用户自己的飞书云文档**。
+
+**不要用 Hermes 内置「agent飞书认证」**；请用本仓库脚本。
+
+### 用户第一次连接（推荐）
+
+| 系统 | 操作 |
+|------|------|
+| **Windows** | 双击 **`feishu-connect.bat`** |
+| **Mac / Linux** | `bash scripts/feishu-connect.sh` |
+
+浏览器点「同意」后，再导出报告。
 
 ### 工具提供方配置（做一次，全员共用）
 
@@ -109,6 +122,7 @@ npm run feishu:export -- output/report.md "标题"
 | 8787 端口被占用 | 关闭其他授权窗口；脚本会自动尝试释放端口 |
 | 文档进谁的飞书？ | OAuth 授权时登录的飞书账号 |
 | 换电脑 | 新电脑需重新授权一次 |
+| 出现「没有 access to agent飞书认证」 | **勿用 Hermes 内置飞书**；双击 `feishu-connect.bat` 重新授权，详见 `FEISHU-USER-GUIDE.md` |
 | 每次新建文档？ | 是，当前每次导出创建新飞书文档 |
 | 导出后能编辑吗？ | 是，导出后自动转移所有权；若仍不可编辑请重新 OAuth 授权 |
 

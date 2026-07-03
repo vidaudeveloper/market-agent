@@ -43,13 +43,11 @@ echo 项目路径: %~dp0
 echo.
 echo 下一步:
 echo   1. 用 Hermes/Cursor 打开本文件夹，直接对话写报告（无需 AI_API_KEY）
-echo   2. 导出飞书: node scripts/feishu-export.js output/报告.md "标题" --charts
-echo      首次会打开浏览器完成飞书 OAuth
-echo   3. (可选) 仅 ai-analyze.js 或 --charts-ai 需在 .env 填 AI_API_KEY
-echo   4. (可选) 出海匠数据: 配置 auth.json
+echo   2. 连接飞书: 双击 feishu-connect.bat（首次每人做一次，勿用 Hermes 内置飞书）
+echo   3. 导出飞书: node scripts/feishu-export.js output/报告.md "标题" --charts
+echo   4. (可选) 仅 ai-analyze.js 或 --charts-ai 需在 .env 填 AI_API_KEY
+echo   5. (可选) 出海匠数据: 配置 auth.json
 echo.
-echo 飞书导出:
-echo   node scripts/feishu-export.js output/报告.md "文档标题"
-echo   详见 README.md
+echo 飞书用户指南: FEISHU-USER-GUIDE.md
 echo.
 pause

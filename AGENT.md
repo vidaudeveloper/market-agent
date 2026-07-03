@@ -50,7 +50,9 @@
 
 将 `output/` 中的 Markdown 报告导出到**当前用户自己的飞书云文档**。
 
-**完整流程见 `skills/feishu-export/SKILL.md`**（Hermes / Cursor 等 Agent 优先读取该 skill）。
+**完整流程见 `skills/feishu-export/SKILL.md`**；**普通用户图文见 `FEISHU-USER-GUIDE.md`**。
+
+**禁止**使用 Hermes 内置「agent飞书认证」。首次连接请引导用户运行 `feishu-connect.bat`（Windows）或 `bash scripts/feishu-connect.sh`。
 
 **无需 Web 设置页**：首次导出时自动打开浏览器完成飞书 OAuth 授权。
 
@@ -72,6 +74,7 @@
 
 | 命令 | 用途 |
 |------|------|
+| `feishu-connect.bat` / `bash scripts/feishu-connect.sh` | **普通用户首次连接**（推荐） |
 | `node scripts/feishu-auth.js` | 手动发起/重新授权 |
 | `node scripts/feishu-auth.js --status` | 查看是否已连接 |
 | `node scripts/feishu-auth.js --logout` | 断开本机飞书连接 |

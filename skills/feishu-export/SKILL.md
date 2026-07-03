@@ -5,6 +5,9 @@ description: "飞书文档导出。触发词：导出飞书、飞书文档、导
 
 # 飞书文档导出 / Feishu Doc Export
 
+> **普通用户 3 步指南：[`FEISHU-USER-GUIDE.md`](../../FEISHU-USER-GUIDE.md)**  
+> 首次连接：Windows 双击 `feishu-connect.bat` / Mac·Linux `bash scripts/feishu-connect.sh`
+
 ## 触发方式
 
 - "导出到飞书"
@@ -256,6 +259,7 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 
 | 问题 | 处理 |
 |------|------|
+| **无 access to agent飞书认证** | 用户误用 Hermes 内置飞书 → 引导 `feishu-connect.bat`，见 `FEISHU-USER-GUIDE.md` |
 | 导出后无法编辑 | 升级脚本后重新 `feishu-auth.js --logout` 再授权；旧文档需手动转移所有者 |
 | 20029 重定向 URL 有误 | 检查飞书开放平台回调 URL 是否已添加并发布应用 |
 | 8787 端口被占用 | 关闭其他授权窗口；或 `netstat -ano \| findstr :8787` 后结束占用进程 |

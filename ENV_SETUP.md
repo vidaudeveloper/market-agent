@@ -20,16 +20,32 @@
 
 ## 飞书（导出功能）
 
+> **普通用户完整步骤：[`FEISHU-USER-GUIDE.md`](FEISHU-USER-GUIDE.md)**
+
 仓库 `.env` 已包含 `FEISHU_APP_ID` / `FEISHU_APP_SECRET`（团队共用应用）。
 
 **用户只需：**
 
+1. **连接飞书（每人每电脑一次）**  
+   - Windows：双击 `feishu-connect.bat`  
+   - Mac/Linux：`bash scripts/feishu-connect.sh`  
+   - **禁止**使用 Hermes 内置「agent飞书认证」
+
+2. **导出报告**
+
 ```bash
 node scripts/feishu-export.js output/报告.md "标题" --charts
-# 首次 → 浏览器点「同意」→ 凭证写入 auth/feishu-user.json
 ```
 
 `auth/feishu-user.json` 不进 Git，每人每电脑各授权一次。
+
+### 普通用户：无权限页面
+
+若浏览器显示 **You don't have the access to 'agent飞书认证'**：
+
+1. 关闭页面，不要在 Hermes 设置里连飞书  
+2. 改用 `feishu-connect.bat` / `feishu-connect.sh`  
+3. 若仍失败 → 联系飞书管理员将你加入应用「可用范围」（见 `FEISHU-USER-GUIDE.md` 可复制话术）
 
 ### 管理员维护飞书应用（一次性）
 
