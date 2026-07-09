@@ -23,6 +23,10 @@ const {
   getUserAuthStatus,
   ensureDocumentEditable,
   insertChartsIntoDocument,
+  styleFeishuTableHeaders,
+  styleFeishuDocumentTitle,
+  embedImagesInTableColumn,
+  listAllDocumentBlocks,
   listDocumentTableBlocks,
   attachChartsToTableBlocks
 } = require('./feishu-lib');
@@ -195,6 +199,37 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
     await insertChartsIntoDocument(userAccessToken, documentId, chartsWithAnchor);
   }
 
+  if (options.styleTableHeaders !== false) {
+    console.log('🎨 正在设置表格表头单元格浅蓝底色…');
+    const styled = await styleFeishuTableHeaders(userAccessToken, documentId, {
+      headerCellBackground: options.headerCellBackground || 'LightBlueBackground'
+    });
+    if (styled) console.log(`   已设置 ${styled} 个表头单元格`);
+  }
+
+  if (options.styleDocumentTitle !== false) {
+    console.log('🎨 正在设置大标题蓝色…');
+    const titleBlock = await styleFeishuDocumentTitle(userAccessToken, documentId, {
+      titleColor: options.titleColor ?? 5
+    });
+    if (titleBlock) console.log('   大标题已设为蓝色');
+  }
+
+  if (options.tableEmbeds?.length) {
+    console.log('🖼️  正在嵌入表格头像/产品图…');
+    for (const embed of options.tableEmbeds) {
+      const count = await embedImagesInTableColumn(
+        userAccessToken,
+        documentId,
+        embed.tableIndex,
+        embed.columnIndex,
+        embed.imagePaths,
+        embed.options || {}
+      );
+      console.log(`   表格#${embed.tableIndex} 列${embed.columnIndex}: ${count} 张`);
+    }
+  }
+
   const ownership = await ensureDocumentEditable(env, documentId, {
     openId: auth?.open_id,
     userAccessToken
@@ -210,6 +245,9 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
   };
 }
 
+module.exports = { exportMarkdownToFeishu };
+
+if (require.main === module) {
 (async () => {
   const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
   const flags = new Set(process.argv.slice(2).filter(a => a.startsWith('--')));
@@ -262,3 +300,4 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
     process.exit(1);
   }
 })();
+}

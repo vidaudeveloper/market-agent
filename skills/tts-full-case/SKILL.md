@@ -20,6 +20,7 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 - `skills/tts-partnership-proposal/SKILL.md`
 - `skills/tts-operation-model/SKILL.md`（有 TTS 店铺数据时）
 - `skills/chuhaijiang-data/SKILL.md`
+- `skills/tts-pricing-logic/SKILL.md`（报价章节）
 - `skills/market-chart/SKILL.md`
 - `skills/feishu-export/SKILL.md`
 
@@ -29,19 +30,21 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 阶段 0 — Intake
   └─ 读 templates/intake-tts.json，缺项提问
 
-阶段 1 — 数据采集
+阶段 1 — 数据采集（分析环节，必做）
+  ├─ node scripts/chuhaijiang-pipeline-test.js --keyword "品类" [--export-feishu]
+  │    → 达人/店铺/商品表 + 出海匠截图证据
+  ├─ 或分步：chuhaijiang-fetch.js shop-ranking / product-search
   ├─ WebFetch：Amazon 产品/店铺
-  ├─ node scripts/chuhaijiang-fetch.js product-search "关键词"
   └─ 可选：feishu-read 拉内部案例结构
 
 阶段 2 — 主报告（必做）
-  └─ tts-growth-plan → output/{BRAND}-TTS增长全案-{DATE}.md
+  └─ tts-growth-plan → 含出海匠数据表 + 截图引用章节
 
 阶段 3 — 测算（有 TTS/Kalodata 数据时必做）
-  └─ tts-operation-model → output/{BRAND}-TTS运营测算-{DATE}.md
+  └─ tts-operation-model → 引用出海匠对标数据
 
 阶段 4 — 合作提案（用户要报价/签单时）
-  └─ tts-partnership-proposal → output/{BRAND}-TTS合作方案-{DATE}.md
+  └─ tts-partnership-proposal + tts-pricing-logic（GMV倒推→四岗位报价）
 
 阶段 5 — Amazon 补充（有 Amazon 链接时）
   └─ amazon-agency-plan → output/{BRAND}-Amazon代运营-{DATE}.md

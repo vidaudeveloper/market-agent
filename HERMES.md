@@ -64,6 +64,29 @@ Copy-Item -Recurse -Force skills\vidau-market-agent "$env:USERPROFILE\.hermes\sk
 
 ---
 
+## MCP 接入（推荐）
+
+安装本仓库 MCP 后，Hermes 可直接调用出海匠 pipeline、飞书导出等工具，无需手写 shell。
+
+```bash
+# 仓库根目录
+install-mcp.bat                    # Windows
+bash install-mcp.sh                # Mac/Linux
+
+hermes mcp add vidau-market \
+  --command node \
+  --args <仓库绝对路径>/mcp-server/index.js \
+  --env VIDAU_MARKET_ROOT=<仓库绝对路径>
+
+/reload-mcp
+```
+
+完整说明见 [`MCP-USER-GUIDE.md`](MCP-USER-GUIDE.md)。
+
+**超时建议**：出海匠 pipeline 约 1–3 分钟，可在 `~/.hermes/config.yaml` 为 `vidau-market` 设置 `timeout: 300`。
+
+---
+
 ## 为何不能只「打开文件夹」就有斜杠？
 
 | 机制 | 作用 |

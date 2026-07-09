@@ -5,6 +5,9 @@
   "private": true,
   "scripts": {
     "setup": "npx playwright install chromium",
+    "mcp:start": "node mcp-server/index.js",
+    "mcp:install": "node -e \"require('child_process').execSync(process.platform==='win32'?'install-mcp.bat':'bash install-mcp.sh',{stdio:'inherit',cwd:process.cwd()})\"",
+    "mcp:smoke": "node mcp-server/smoke-test.js",
     "chuhaijiang": "node scripts/chuhaijiang-fetch.js",
     "ai:chart": "node scripts/ai-chart.js",
     "feishu:auth": "node scripts/feishu-auth.js",
@@ -16,8 +19,10 @@
     "chart:md": "node scripts/chart-markdown.js"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "playwright": "^1.55.0",
-    "quickchart-js": "^3.1.3"
+    "quickchart-js": "^3.1.3",
+    "zod": "^4.4.3"
   },
   "engines": {
     "node": ">=18.0.0"

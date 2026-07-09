@@ -528,6 +528,30 @@ function readPngDimensions(buffer) {
   };
 }
 
+function readJpegDimensions(buffer) {
+  let i = 2;
+  while (i < buffer.length) {
+    if (buffer[i] !== 0xff) break;
+    const marker = buffer[i + 1];
+    const len = buffer.readUInt16BE(i + 2);
+    if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+      return { height: buffer.readUInt16BE(i + 5), width: buffer.readUInt16BE(i + 7) };
+    }
+    i += 2 + len;
+  }
+  return null;
+}
+
+function readImageDimensions(buffer) {
+  try {
+    return readPngDimensions(buffer);
+  } catch {
+    const jpeg = readJpegDimensions(buffer);
+    if (jpeg) return jpeg;
+    return { width: 120, height: 120 };
+  }
+}
+
 /**
  * 按最大宽度等比缩放，用于飞书 replace_image
  */
@@ -548,7 +572,7 @@ function fitImageDimensions(naturalWidth, naturalHeight, maxWidth = 680) {
 function buildReplaceImageBody(fileToken, imagePath, options = {}) {
   const fs = require('fs');
   const buffer = fs.readFileSync(imagePath);
-  const natural = readPngDimensions(buffer);
+  const natural = readImageDimensions(buffer);
   const maxWidth = options.width || options.maxWidth || 680;
   const fitted = fitImageDimensions(natural.width, natural.height, maxWidth);
 
@@ -562,9 +586,9 @@ function buildReplaceImageBody(fileToken, imagePath, options = {}) {
   return { body, buffer, dimensions: fitted, natural };
 }
 
-async function uploadImageToBlock(accessToken, documentId, imageBlockId, imagePath) {
+async function uploadImageToBlock(accessToken, documentId, imageBlockId, imagePath, options = {}) {
   const path = require('path');
-  const { body, buffer } = buildReplaceImageBody('', imagePath);
+  const { body, buffer } = buildReplaceImageBody('', imagePath, options);
   const fileName = path.basename(imagePath);
 
   const form = new FormData();
@@ -856,6 +880,231 @@ function attachChartsToTableBlocks(charts, tableBlocks) {
   });
 }
 
+async function listAllDocumentBlocks(accessToken, documentId) {
+  const blocks = {};
+  let pageToken = '';
+  do {
+    const query = pageToken ? `?page_token=${pageToken}` : '';
+    const res = await feishuJson(
+      accessToken,
+      `/docx/v1/documents/${documentId}/blocks${query}`,
+      { method: 'GET' }
+    );
+    for (const block of res.items || []) {
+      blocks[block.block_id] = block;
+    }
+    pageToken = res.has_more ? res.page_token : '';
+  } while (pageToken);
+  return blocks;
+}
+
+/**
+ * 表头行：仅单元格浅蓝底（禁用 header_row 灰底，不用文字高亮）
+ */
+async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
+  const cellBg = options.headerCellBackground || 'LightBlueBackground';
+  const tableBlocks = await listDocumentTableBlocks(accessToken, documentId);
+  const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
+  let styled = 0;
+
+  for (const { blockId, block } of tableBlocks) {
+    const table = block.table;
+    if (!table?.cells?.length || !table.property?.column_size) continue;
+    const colSize = table.property.column_size;
+    const headerCellIds = table.cells.slice(0, colSize);
+
+    // 关闭飞书默认标题行灰底（与浅蓝底叠色）
+    try {
+      await feishuJson(
+        accessToken,
+        `/docx/v1/documents/${documentId}/blocks/${blockId}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            update_table_property: {
+              header_row: false
+            }
+          })
+        }
+      );
+    } catch {
+      // 忽略
+    }
+
+    for (const cellId of headerCellIds) {
+      const cellBlock = allBlocks[cellId];
+      if (!cellBlock?.children?.length) continue;
+
+      for (const childId of cellBlock.children) {
+        const textBlock = allBlocks[childId];
+        if (!textBlock || textBlock.block_type !== 2) continue;
+
+        try {
+          await feishuJson(
+            accessToken,
+            `/docx/v1/documents/${documentId}/blocks/${childId}`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({
+                update_text_style: {
+                  style: { background_color: cellBg, align: 2 },
+                  fields: [6, 1]
+                }
+              })
+            }
+          );
+          styled++;
+        } catch (err) {
+          console.warn(`   ⚠ 表头单元格背景失败 (${childId}): ${err.message}`);
+        }
+
+        const elements = textBlock.text?.elements || [];
+        if (!elements.length) continue;
+        const updated = elements.map(el => {
+          if (!el.text_run) return el;
+          const prev = el.text_run.text_element_style || {};
+          const { background_color, text_color, ...rest } = prev;
+          return {
+            text_run: {
+              content: el.text_run.content || '',
+              text_element_style: { ...rest, bold: true }
+            }
+          };
+        });
+        try {
+          await feishuJson(
+            accessToken,
+            `/docx/v1/documents/${documentId}/blocks/${childId}`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({ update_text_elements: { elements: updated } })
+            }
+          );
+        } catch {
+          // 加粗失败不阻断
+        }
+      }
+    }
+  }
+
+  return styled;
+}
+
+/** 文档首个一级标题设为蓝色（FontColor=5） */
+async function styleFeishuDocumentTitle(accessToken, documentId, options = {}) {
+  const titleColor = options.titleColor ?? 5;
+  const children = await getDocumentChildrenOrder(accessToken, documentId);
+  const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
+
+  for (const blockId of children) {
+    const block = allBlocks[blockId];
+    if (!block) continue;
+    if (block.block_type === 3) {
+      const elements = block.heading1?.elements || block.text?.elements || [];
+      if (!elements.length) continue;
+      const updated = elements.map(el => {
+        if (!el.text_run) return el;
+        return {
+          text_run: {
+            content: el.text_run.content || '',
+            text_element_style: {
+              ...(el.text_run.text_element_style || {}),
+              bold: true,
+              text_color: titleColor
+            }
+          }
+        };
+      });
+      await feishuJson(
+        accessToken,
+        `/docx/v1/documents/${documentId}/blocks/${blockId}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ update_text_elements: { elements: updated } })
+        }
+      );
+      return blockId;
+    }
+  }
+  return null;
+}
+
+async function clearTableCellChildren(accessToken, documentId, cellBlock, allBlocks) {
+  const childIds = cellBlock.children || [];
+  for (const childId of [...childIds].reverse()) {
+    const child = allBlocks[childId];
+    if (!child) continue;
+    try {
+      await feishuJson(
+        accessToken,
+        `/docx/v1/documents/${documentId}/blocks/${childId}`,
+        { method: 'DELETE' }
+      );
+    } catch {
+      // 忽略删除失败
+    }
+  }
+}
+
+/**
+ * 在表格指定列插入本地图片（跳过表头行）
+ * @param {number} tableIndex - 文档中第 N 个表格（0-based）
+ * @param {number} columnIndex - 列索引（0-based）
+ * @param {string[]} imagePaths - 与数据行一一对应
+ */
+async function embedImagesInTableColumn(accessToken, documentId, tableIndex, columnIndex, imagePaths, options = {}) {
+  const maxWidth = options.maxWidth || 72;
+  const maxHeight = options.maxHeight || 72;
+  const tableBlocks = await listDocumentTableBlocks(accessToken, documentId);
+  const target = tableBlocks[tableIndex];
+  if (!target) {
+    console.warn(`   ⚠ 表格索引 ${tableIndex} 不存在，跳过图片嵌入`);
+    return 0;
+  }
+
+  const table = target.block.table;
+  const colSize = table.property.column_size;
+  const rowSize = table.property.row_size;
+  const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
+  let inserted = 0;
+
+  for (let row = 1; row < rowSize && row - 1 < imagePaths.length; row++) {
+    const imgPath = imagePaths[row - 1];
+    if (!imgPath || !require('fs').existsSync(imgPath)) continue;
+
+    const cellIndex = row * colSize + columnIndex;
+    const cellId = table.cells[cellIndex];
+    const cellBlock = allBlocks[cellId];
+    if (!cellBlock) continue;
+
+    await clearTableCellChildren(accessToken, documentId, cellBlock, allBlocks);
+
+    const created = await feishuJson(
+      accessToken,
+      `/docx/v1/documents/${documentId}/blocks/${cellId}/children`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          index: 0,
+          children: [{ block_type: 27, image: {} }]
+        })
+      }
+    );
+
+    const imageBlockId = created.children?.[0]?.block_id;
+    if (!imageBlockId) continue;
+
+    await uploadImageToBlock(accessToken, documentId, imageBlockId, imgPath, {
+      maxWidth,
+      exactWidth: maxWidth,
+      exactHeight: maxHeight
+    });
+    inserted++;
+  }
+
+  return inserted;
+}
+
 async function insertChartsIntoDocument(accessToken, documentId, charts) {
   const anchored = charts.filter(c => c.afterBlockId);
   const append = charts.filter(c => !c.afterBlockId);
@@ -1050,9 +1299,14 @@ module.exports = {
   buildAuthorizeUrl,
   ensureDocumentEditable,
   readPngDimensions,
+  readImageDimensions,
   fitImageDimensions,
   getDocumentChildrenOrder,
   listDocumentTableBlocks,
+  listAllDocumentBlocks,
+  styleFeishuTableHeaders,
+  styleFeishuDocumentTitle,
+  embedImagesInTableColumn,
   attachChartsToTableBlocks,
   insertMarkdownBlocksAtIndex,
   insertLocalImageIntoDocument,

@@ -1,0 +1,64 @@
+{
+  "source": "全案代运营计费逻辑",
+  "source_file": "d:\\策划师agent\\【全案代运营计费逻辑】.txt",
+  "currency": "USD",
+  "reasoning_chain": [
+    "根据 GMV 目标倒推",
+    "倒推所需视频量 + 达人量 + 是否加直播",
+    "按工作量匹配人手",
+    "按岗位摊销得出基础运营费"
+  ],
+  "roles": {
+    "shop_ads_ops": {
+      "label": "店铺运营 + 投流运营",
+      "monthly_usd": 1000,
+      "note": "每店铺 1 人摊销"
+    },
+    "script_director": {
+      "label": "编导脚本",
+      "monthly_usd": 1000,
+      "note": "每店铺 1 人摊销"
+    },
+    "editor": {
+      "label": "剪辑",
+      "headcount_rule": "平均每 150 条视频需 1 人",
+      "monthly_per_head_usd": 2200,
+      "per_video_usd_default": 20,
+      "per_video_range": { "low": 10, "high": 60 },
+      "per_video_notes": {
+        "complex_product": "形态复杂/AI 自制成本高（如 Narrak 电动车）取 20–60 USD/条",
+        "simple_product": "服装等 AI 生成容易取 10–15 USD/条"
+      },
+      "blend": "取岗位人数法与按条计费法的中间值"
+    },
+    "creator_bd": {
+      "label": "达人 BD",
+      "headcount_rule": "平均每 60 条达人视频需 1 人",
+      "monthly_per_head_usd": 1500,
+      "per_video_usd": 30,
+      "blend": "取岗位人数法与按条计费法的中间值"
+    }
+  },
+  "formulas": {
+    "editor_monthly": "avg(headcount * 2200, video_count * per_video_usd)",
+    "creator_bd_monthly": "avg(headcount * 1500, creator_video_count * 30)",
+    "monthly_total": "shop_ads_ops + script_director + editor_monthly + creator_bd_monthly",
+    "quarterly_total": "monthly_total * 3"
+  },
+  "example_narrak_q1": {
+    "brand": "Narrak 电动车",
+    "phase": "前三个月启动期",
+    "monthly_creator_videos": 50,
+    "monthly_self_made_videos": 300,
+    "breakdown_usd": {
+      "shop_ads_ops": 1000,
+      "script_director": 1000,
+      "editor": 5200,
+      "creator_bd": 1650
+    },
+    "monthly_total_usd": 8850,
+    "quarterly_total_usd": 26550,
+    "editor_calc": "headcount: 2200*2=4400; per_video: 300*20=6000; blend=(4400+6000)/2=5200",
+    "creator_bd_calc": "headcount: 1500*1=1500; per_video: 50*30=1500; blend=1650"
+  }
+}

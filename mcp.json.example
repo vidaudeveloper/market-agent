@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "vidau-market": {
+      "command": "node",
+      "args": ["D:/path/to/market-agent/mcp-server/index.js"],
+      "env": {
+        "VIDAU_MARKET_ROOT": "D:/path/to/market-agent"
+      }
+    }
+  }
+}

@@ -16,7 +16,7 @@
 
 | 交付类型 | Skill | 参考案例 |
 |----------|-------|----------|
-| TTS 合作提案 / 代运营报价 | `tts-partnership-proposal` | `templates/reference/NARRAK-Electric-Bike-&-Yatop-TTS合作方案.md` |
+| TTS 合作提案 / 代运营报价 | `tts-partnership-proposal` + `tts-pricing-logic` | NARRAK 合作方案 |
 | TikTok 运营测算 / 诊断 | `tts-operation-model` | `templates/reference/V3-Vanson-汽车检测仪器美区-TikTok-运营测算.md` |
 | 市场分析 + 选品 + 打品 + 节点 | `tts-growth-plan` | 出海匠 NARRAK 题 + `紫晶海外社媒调研-2026.md` 结论块 |
 | Amazon 代运营 | `amazon-agency-plan` | `output/B0DCVSB4WX-NARRAK-Amazon分析与代运营方案.md` |
@@ -98,11 +98,13 @@
 - 每条含：问题描述 → 影响程度（⚠️ 1–5）→ 诊断结论
 - 行业对标须含 **倍数差距**（如「达人数量差 7667 倍」）
 
-### 2.5 方案 Package（合作提案）
+### 2.5 方案 Package 与报价（合作提案）
 
 - 90 天交付须**量化**：BGC 条数、达人视频条数、直播小时
-- 报价三级：基础 / 标准（推荐）/ 旗舰
+- **报价须按 `skills/tts-pricing-logic/SKILL.md`**：GMV 目标 → 视频量 → 四岗位人手 → 月费/季度费（禁止只写固定三档无推导）
+- 报价三级：基础 / 标准（推荐）/ 旗舰（可与 `agency-defaults.json` 标签对照）
 - 区分：服务费 vs 广告 spend vs Coupon 补贴
+- **分析章节须含出海匠数据表 + 截图证据**（`chuhaijiang-pipeline-test` 或等价抓取）
 
 ### 2.6 图表（`market-chart`）
 
@@ -145,7 +147,8 @@
 - [ ] 含 30/90 天或渠道结构（或已标注估算）
 - [ ] 竞品 ≥2 且有「启示」或对标表
 - [ ] 有时间计划（月/周）
-- [ ] 合作案含 Package 交付数量
+- [ ] 合作案含 Package 交付数量 + **报价倒推过程**（tts-pricing-logic）
+- [ ] TTS 分析含出海匠数据表与截图证据章节
 - [ ] ≥2 处 chart 标记（如有数据表）
 - [ ] 数据来源汇总完整
 

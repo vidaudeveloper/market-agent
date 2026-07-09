@@ -41,11 +41,13 @@ npm install             # 或双击 setup.bat
 # .env 已含飞书凭证；首次导出前运行 feishu-connect.bat
 ```
 
-### 3️⃣ 在 Cursor 中打开本文件夹
+### 3️⃣ 在 Cursor / Hermes 中打开本文件夹
 
 ```
 D:\AAA-agent\AI营销全案策划师
 ```
+
+**推荐**：运行 `install-mcp.bat`（或 `bash install-mcp.sh`）启用 **vidau-market MCP**，见 [`MCP-USER-GUIDE.md`](MCP-USER-GUIDE.md)。
 
 直接对话示例：
 

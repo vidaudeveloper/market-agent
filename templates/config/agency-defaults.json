@@ -13,5 +13,8 @@
     "standard": { "label": "标准版（推荐）", "monthly_fee_usd": 2800 },
     "premium": { "label": "全案版", "monthly_fee_usd": 4200 }
   },
+  "pricing_logic_ref": "templates/config/pricing-logic.json",
+  "pricing_skill": "skills/tts-pricing-logic/SKILL.md",
+  "_pricing_note": "三档标签仅供参考；实际报价须按 pricing-logic GMV倒推四岗位重算，见 Narrak 示例月费 8850 USD",
   "_note": "所有对外交付文档的服务商署名必须为 Vidau。case_links / system_wiki_url 待补充 Vidau 官方链接。"
 }

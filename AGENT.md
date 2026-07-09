@@ -42,11 +42,19 @@
 
 脚本依赖 `auth.json` 中的认证信息。如未配置或过期，引导用户获取。
 
-### 4. 可选 MCP 工具
+### 4. Vidau Market MCP（推荐接入）
 
-如果用户配置了 MCP 服务器（参考 `mcp.example.json`），可获得额外能力：趋势数据、SEO 性能审计、Google SERP 数据、社媒帖子生成等。
+本项目自带 **vidau-market** MCP Server，供 Cursor / Hermes 等客户端一键调用脚本能力。
 
-### 5. 飞书文档导出（用户 OAuth，方案 A）
+- 配置：`.cursor/mcp.json` 或 `hermes mcp add`（见 `MCP-USER-GUIDE.md`）
+- P0 工具：`auth_status`、`chuhaijiang_pipeline`、`feishu_export` 等
+- **已配置 MCP 时优先调 tool，勿手写 shell**
+
+### 5. 外部 MCP 工具（可选）
+
+如果用户配置了外部 MCP 服务器（参考 `mcp.example.json`），可获得额外能力：趋势数据、SEO 性能审计、Google SERP 数据、社媒帖子生成等。
+
+### 6. 飞书文档导出（用户 OAuth，方案 A）
 
 将 `output/` 中的 Markdown 报告导出到**当前用户自己的飞书云文档**。
 
@@ -129,7 +137,8 @@
 | PDF、导出、打印 | market-report-pdf |
 | 出海匠、TikTok 数据、店铺排行 | chuhaijiang-data |
 | **TTS 全案、布局 TikTok、选品打品** | **tts-full-case** → tts-growth-plan |
-| **TTS 合作方案、代运营报价、Package** | **tts-partnership-proposal** |
+| **TTS 合作方案、代运营报价、Package** | **tts-partnership-proposal** + **tts-pricing-logic** |
+| **GMV倒推报价、运营费测算** | **tts-pricing-logic** |
 | **TikTok 运营测算、店铺诊断** | **tts-operation-model** |
 | **Amazon 代运营、ASIN 分析** | **amazon-agency-plan** |
 | 导出飞书、飞书文档、导出到飞书 | feishu-export |
@@ -142,19 +151,21 @@
 ```
 1. 读 skills/DELIVERY-STANDARD.md + skills/tts-full-case/SKILL.md
 2. 对照 templates/intake-tts.json 收集缺项（品牌、链接、GMV、ASP、启动月…）
-3. chuhaijiang 拉竞品 → 写 tts-growth-plan（主报告）
-4. 有店铺数据 → tts-operation-model；要报价 → tts-partnership-proposal
-5. 有 Amazon 链接 → amazon-agency-plan
-6. <!-- chart --> + feishu-export --charts（**默认自动执行**，见 delivery-defaults.json）
+3. chuhaijiang-pipeline-test（达人/店铺/截图）→ 写入分析章节
+4. 写 tts-growth-plan（主报告，含出海匠数据表 + 截图证据）
+5. 有店铺数据 → tts-operation-model；要报价 → tts-partnership-proposal + tts-pricing-logic
+6. 有 Amazon 链接 → amazon-agency-plan
+7. feishu-export --charts（表头浅蓝 + 大标题蓝色，默认自动）
 ```
 
 参考案例在 `templates/reference/`（`node scripts/feishu-read-doc.js --batch templates/feishu-reference-urls.txt` 更新）。
 
 ### 当用户说"查 TikTok 数据"时
 
-1. 先检查 `auth.json` 是否存在且有效
-2. 如未配置 → 引导用户：打开出海匠 → F12 → Application → Cookies → 复制 `auth_session`；Local Storage → 复制 `_l_KPLiPs` → 填入 `auth.json`
-3. 已配置 → 执行 `scripts/chuhaijiang-fetch.js` 的对应命令
+1. 检查 `auth/chuhaijiang-storage.json` 或 `auth.json`
+2. 如未配置或过期 → `node scripts/chuhaijiang-fetch.js screenshot --login`
+3. **分析类任务** → `node scripts/chuhaijiang-pipeline-test.js --keyword "品类" [--export-feishu]`
+4. 单点查询 → `scripts/chuhaijiang-fetch.js` 分命令
 
 ---
 
@@ -169,7 +180,8 @@
 ### 出海匠数据查询
 
 ```
-用户请求数据 → 检查认证 → 用 Playwright 注入认证 → 导航到目标页面 → 抓取数据 → 格式化输出
+TTS 分析 → chuhaijiang-pipeline-test（达人/店铺/商品/截图）
+单点查询 → chuhaijiang-fetch.js → 检查认证 → Playwright 抓取 → 格式化输出
 ```
 
 ---

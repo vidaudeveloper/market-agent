@@ -21,7 +21,7 @@ const path = require('path');
 const { generateChart, buildChartConfig } = require('./chart-gen');
 const { loadEnv, slugify, generateImage, saveImageBuffer, ROOT } = require('./ai-lib');
 
-const CHART_MARKER = /^<!--\s*chart(?::([\w-]+))?\s*-->$/i;
+const CHART_MARKER = /^<!--\s*chart(?::([\w-]+))?(?:\s+title=[^\s]+)?\s*-->$/i;
 const VALID_CHART_TYPES = new Set(['bar', 'line', 'pie', 'doughnut', 'radar', 'auto']);
 
 function parseRow(line) {

@@ -7,6 +7,8 @@
  *   node scripts/chuhaijiang-fetch.js shop-ranking --top 10 # 前 10 名
  *   node scripts/chuhaijiang-fetch.js product-search "关键词" # 商品搜索
  *   node scripts/chuhaijiang-fetch.js product-detail <id>    # 商品详情(需付费)
+ *   node scripts/chuhaijiang-fetch.js screenshot              # 截图首页（需 auth.json）
+ *   node scripts/chuhaijiang-fetch.js screenshot --login      # 打开浏览器手动登录后截图
  *
  * 认证: 需要 auth.json，参考 auth.example.json
  */
@@ -67,6 +69,93 @@ async function injectAuth(page, auth) {
       }
     }, auth.localStorage);
   }
+}
+
+function ensureOutputDir() {
+  const outDir = path.join(__dirname, '..', 'output');
+  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
+  return outDir;
+}
+
+function screenshotPath(name = 'chuhaijiang-homepage') {
+  const stamp = new Date().toISOString().slice(0, 10);
+  return path.join(ensureOutputDir(), `${name}-${stamp}.png`);
+}
+
+async function createBrowserPage(headless = true) {
+  const browser = await chromium.launch({ headless });
+  const context = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    viewport: { width: 1920, height: 1080 }
+  });
+  const page = await context.newPage();
+  return { browser, context, page };
+}
+
+/** 登录后首页截图（Playwright page.screenshot） */
+async function screenshotHomepage(options = {}) {
+  ensureOutputDir();
+  const outFile = screenshotPath();
+  const targetUrl = options.url || 'https://www.chuhaijiang.com/app';
+
+  if (options.login) {
+    log('\n📸 出海匠登录截图模式', c.cyan);
+    log('将打开浏览器，请完成登录；进入应用后脚本会自动截图\n', c.yellow);
+
+    const { browser, context, page } = await createBrowserPage(false);
+    try {
+      await page.goto('https://www.chuhaijiang.com', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      log('⏳ 等待登录（检测到 /app 或离开 login 页后自动继续，最多 5 分钟）...', c.cyan);
+
+      await page.waitForFunction(() => {
+        const href = window.location.href;
+        return href.includes('/app') && !href.includes('login');
+      }, { timeout: 300000 }).catch(() => {
+        log('未自动检测到登录完成，将对当前页面截图', c.yellow);
+      });
+
+      await page.waitForTimeout(2000);
+      if (!page.url().includes('/app')) {
+        await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+        await page.waitForTimeout(2000);
+      }
+
+      await page.screenshot({ path: outFile, fullPage: true });
+      const statePath = path.join(__dirname, '..', 'auth', 'chuhaijiang-storage.json');
+      const authDir = path.dirname(statePath);
+      if (!fs.existsSync(authDir)) fs.mkdirSync(authDir, { recursive: true });
+      await context.storageState({ path: statePath });
+
+      log(`\n✅ 截图已保存: ${outFile}`, c.green);
+      log(`   当前页面: ${page.url()}`, c.cyan);
+      log(`   登录态已保存: ${statePath}（下次可免登录）`, c.cyan);
+    } finally {
+      await browser.close();
+    }
+    return outFile;
+  }
+
+  const auth = loadAuth();
+  log('\n📸 正在截图出海匠首页...\n', c.cyan);
+  const { browser, page } = await createBrowserPage(true);
+  try {
+    await injectAuth(page, auth);
+    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.waitForTimeout(2000);
+
+    if (page.url().includes('login')) {
+      log('❌ 未登录，auth.json 可能已过期', c.red);
+      log('请运行: node scripts/chuhaijiang-fetch.js screenshot --login', c.yellow);
+      process.exit(1);
+    }
+
+    await page.screenshot({ path: outFile, fullPage: true });
+    log(`\n✅ 截图已保存: ${outFile}`, c.green);
+    log(`   当前页面: ${page.url()}`, c.cyan);
+  } finally {
+    await browser.close();
+  }
+  return outFile;
 }
 
 function extractShopRows(pageContent) {
@@ -289,6 +378,8 @@ if (!command) {
   log('  node scripts/chuhaijiang-fetch.js shop-ranking           店铺销量榜');
   log('  node scripts/chuhaijiang-fetch.js shop-ranking --top 5   店铺销量榜 TOP 5');
   log('  node scripts/chuhaijiang-fetch.js product-search "搜索词"  商品搜索');
+  log('  node scripts/chuhaijiang-fetch.js screenshot              截图首页（需 auth.json）');
+  log('  node scripts/chuhaijiang-fetch.js screenshot --login      浏览器登录后截图');
   process.exit(0);
 }
 
@@ -306,9 +397,13 @@ if (!command) {
       await fetchProductSearch(keyword);
       break;
     }
+    case 'screenshot': {
+      await screenshotHomepage({ login: args.includes('--login') });
+      break;
+    }
     default:
       log(`未知命令: ${command}`, c.red);
-      log('支持: shop-ranking, product-search', c.yellow);
+      log('支持: shop-ranking, product-search, screenshot', c.yellow);
       process.exit(1);
   }
 })();
