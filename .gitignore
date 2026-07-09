@@ -1,5 +1,4 @@
-# 密钥与凭证（勿提交）
-.env
+# 密钥与凭证（auth 仍为本机 OAuth，勿提交）
 auth/
 auth.json
 

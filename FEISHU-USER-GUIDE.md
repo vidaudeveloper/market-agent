@@ -7,8 +7,8 @@
 ## 流程总览
 
 ```
-1. setup.bat 安装依赖
-2. 按 FEISHU-APP-SETUP.md 创建应用 → 填入 .env
+1. git clone（.env 已含团队飞书凭证）
+2. setup.bat 安装依赖
 3. feishu-connect.bat 浏览器授权（每人每电脑一次）
 4. 导出: node scripts/feishu-export.js output/报告.md "标题" --charts
 ```
@@ -26,27 +26,13 @@
 
 `setup` 会从 `.env.example` 生成 `.env`（若不存在）。
 
----
-
-## 第 2 步：配置飞书应用（首次必做）
-
-完整图文：**[`FEISHU-APP-SETUP.md`](FEISHU-APP-SETUP.md)**
-
-摘要：
-
-1. [open.feishu.cn](https://open.feishu.cn/app) 创建**企业自建应用**
-2. 配置重定向 URL、权限、发布、可用范围（全部员工）
-3. 把 `FEISHU_APP_ID` / `FEISHU_APP_SECRET` 写入本机 `.env`
-
-检查是否填好：
-
-```bash
-node scripts/feishu-diagnose.js
-```
+`setup` 后仓库 `.env` 已含飞书凭证（clone 即得）。
 
 ---
 
-## 第 3 步：连接飞书（每人每电脑一次）
+## 第 2 步：连接飞书（每人每电脑一次）
+
+可先检查：`node scripts/feishu-diagnose.js`
 
 | 系统 | 操作 |
 |------|------|
@@ -57,7 +43,7 @@ node scripts/feishu-diagnose.js
 
 ---
 
-## 第 4 步：导出报告
+## 第 3 步：导出报告
 
 对 Agent 说：
 

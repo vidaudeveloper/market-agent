@@ -29,7 +29,7 @@
 | 配置项 | 谁需要填 | 何时需要 |
 |--------|----------|----------|
 | **无**（用 Hermes/Agent 写报告） | 普通用户 | 直接对话，**不要填 AI_API_KEY** |
-| `FEISHU_APP_ID` / `SECRET` | **各用户/团队** | 导出飞书前，按 [`FEISHU-APP-SETUP.md`](FEISHU-APP-SETUP.md) 自建应用并写入本机 `.env` |
+| `FEISHU_APP_ID` / `SECRET` | **无需自填** | 仓库 `.env` 已预配（内部共用） |
 | 飞书 OAuth「同意」 | 各用户本机一次 | `feishu-connect.bat` 浏览器授权 |
 | `AI_API_KEY` | 可选 | 仅 `ai-analyze.js` 或 `--charts-ai` |
 | `auth.json` | 各用户 | 仅出海匠 TikTok 数据 |
@@ -37,9 +37,8 @@
 ```bash
 git clone https://github.com/vidaudeveloper/market-agent.git
 cd market-agent
-cp .env.example .env    # Windows: copy .env.example .env
 npm install             # 或双击 setup.bat
-# 导出飞书前：按 FEISHU-APP-SETUP.md 填写 .env
+# .env 已含飞书凭证；首次导出前运行 feishu-connect.bat
 ```
 
 ### 3️⃣ 在 Cursor 中打开本文件夹
@@ -62,12 +61,12 @@ D:\AAA-agent\AI营销全案策划师
 
 > [`FEISHU-APP-SETUP.md`](FEISHU-APP-SETUP.md) 创建应用 → [`FEISHU-USER-GUIDE.md`](FEISHU-USER-GUIDE.md) 连接与导出
 
-将 `output/` 报告导出到**授权用户自己的飞书云文档**。`.env` **不进 Git**，每人用自己企业的自建应用。
+将 `output/` 报告导出到**授权用户自己的飞书云文档**。仓库 `.env` 已含团队共用飞书应用凭证。
 
 ### 流程
 
-1. `copy .env.example .env` 并填入 `FEISHU_APP_ID` / `SECRET`（见 `FEISHU-APP-SETUP.md`）
-2. 双击 **`feishu-connect.bat`**（或 `bash scripts/feishu-connect.sh`）浏览器授权
+1. `git clone` 后直接使用仓库 `.env`
+2. 双击 **`feishu-connect.bat`** 浏览器授权（每人一次）
 3. `node scripts/feishu-export.js output/报告.md "标题" --charts`
 
 勿用 Hermes 内置飞书插件。
@@ -129,7 +128,7 @@ D:\AAA-agent\AI营销全案策划师\
 ├── README.md              ← 本说明（给人看）
 ├── AGENT.md               ← AI 工作流程（给 Agent 看）
 ├── TOOLS.md               ← 工具目录
-├── .env                   ← 本机配置（勿提交 Git）；飞书应用自填
+├── .env                   ← 飞书应用凭证（团队共用，已纳入仓库）
 ├── .env.example           ← 配置模板
 ├── FEISHU-APP-SETUP.md    ← 创建飞书自建应用
 ├── FEISHU-USER-GUIDE.md   ← 连接与导出
@@ -151,7 +150,7 @@ D:\AAA-agent\AI营销全案策划师\
 ## 📤 分发给其他用户
 
 1. `git clone` 或复制整个项目文件夹  
-2. 导出飞书前在本机 `.env` 配置自建应用（见 `FEISHU-APP-SETUP.md`）；**写报告无需 AI_API_KEY**  
+2. 导出飞书前在本机 `.env` 已有团队飞书凭证；**写报告无需 AI_API_KEY**  
 3. 运行 `setup.bat` / `npm install`，在 Hermes / Cursor 打开文件夹  
 4. 飞书导出：用户本机浏览器 OAuth 一次即可  
 
