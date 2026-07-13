@@ -14,7 +14,9 @@ const path = require('path');
 const { loadEnv, ensureUserAuth, insertLocalImageIntoDocument } = require('./feishu-lib');
 const { exportMarkdownToFeishu } = require('./feishu-export');
 const {
-  downloadEntityImages
+  downloadEntityImages,
+  buildTiktokCreatorUrl,
+  resolveChuhaijiangCreatorLink
 } = require('./chuhaijiang-image-utils');
 
 const ROOT = path.join(__dirname, '..');
@@ -282,7 +284,7 @@ async function scrapeCreators(page, keyword) {
       if (cells.length < 3) return;
       const img = row.querySelector('img');
       const links = collectRowLinks(row);
-      const chjProfile = links.find(u => /\/creators\//i.test(u)) || '';
+      const chjProfile = links.find(u => /\/creators\/\d+/i.test(u)) || links.find(u => /\/creators\//i.test(u)) || '';
       const nameLines = (cells[0]?.innerText || '').split('\n').map(l => l.trim()).filter(Boolean);
       const name = nameLines[0] || '';
       const handle = nameLines.find(l => l.startsWith('@')) || '';
@@ -390,16 +392,14 @@ function enrichShopLinks(shops) {
   });
 }
 
-function enrichCreatorLinks(creators) {
+function enrichCreatorLinks(creators, country = 'US') {
   return creators.map(c => {
     const out = { ...c };
-    if (!out.profileUrl) {
-      const m = String(out.avatar || '').match(/ttm_user\/u-(\d+)/);
-      if (m) out.profileUrl = `https://www.chuhaijiang.com/app/discover/tiktok/creators/${m[1]}?country=US`;
-    }
     if (!out.tiktokUrl && out.handle) {
-      out.tiktokUrl = `https://www.tiktok.com/${out.handle.startsWith('@') ? out.handle : `@${out.handle}`}`;
+      out.tiktokUrl = buildTiktokCreatorUrl(out.handle);
     }
+    out.chjUrl = resolveChuhaijiangCreatorLink(out, country);
+    out.chjLinkLabel = '出海匠';
     return out;
   });
 }
@@ -436,7 +436,7 @@ function buildReport({ shops, creators, products, screenshots, keyword }) {
 
   const creatorRows = creators.length
     ? creators.map(c =>
-        `| ${sanitizeCell(c.rank)} | · | ${sanitizeCell(c.name)} | ${sanitizeCell(c.tags)} | ${sanitizeCell(c.gmv)} | ${sanitizeCell(c.fans)} | ${sanitizeCell(c.profileUrl)} | ${sanitizeCell(c.tiktokUrl)} |`
+        `| ${sanitizeCell(c.rank)} | · | ${sanitizeCell(c.name)} | ${sanitizeCell(c.tags)} | ${sanitizeCell(c.gmv)} | ${sanitizeCell(c.fans)} | 链接 | ${sanitizeCell(`@${String(c.handle || '').replace(/^@/, '')}`)} |`
       ).join('\n')
     : '| — | — | 待抓取 | — | — | — | — | — |';
 
@@ -603,7 +603,6 @@ async function runPipeline(options = {}) {
         chartFallbackAi: true,
         styleTableHeaders: true,
         styleDocumentTitle: true,
-        headerCellBackground: 'LightBlueBackground',
         titleColor: 5,
         tableEmbeds: [
           {
@@ -623,6 +622,18 @@ async function runPipeline(options = {}) {
             columnIndex: 1,
             imagePaths: productsWithImg.map(p => p.imageLocal),
             options: { maxWidth: 64, maxHeight: 64 }
+          }
+        ],
+        linkPatches: [
+          {
+            tableIndex: 0,
+            columnIndex: 6,
+            links: creatorsWithImg.map(c => ({ url: c.chjUrl, label: c.chjLinkLabel || '出海匠' }))
+          },
+          {
+            tableIndex: 0,
+            columnIndex: 7,
+            links: creatorsWithImg.map(c => ({ url: c.tiktokUrl, label: `@${String(c.handle || '').replace(/^@/, '')}` }))
           }
         ]
       });

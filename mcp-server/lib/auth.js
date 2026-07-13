@@ -3,31 +3,23 @@ const path = require('path');
 const { getRoot } = require('./root');
 
 function getChuhaijiangStatus(root) {
-  const storage = path.join(root, 'auth', 'chuhaijiang-storage.json');
-  const authJson = path.join(root, 'auth.json');
-
-  if (fs.existsSync(storage)) {
-    const stat = fs.statSync(storage);
+  try {
+    const { getLoginStatus } = require(path.join(root, 'scripts', 'chuhaijiang-auth-check.js'));
+    const status = getLoginStatus();
     return {
-      connected: true,
-      method: 'storage',
-      storage_updated: stat.mtime.toISOString().slice(0, 10)
+      connected: status.ok,
+      method: status.session?.source,
+      has_auth_session: status.has_auth_session,
+      storage_expired: status.storage_expired || false,
+      recommended_action: status.recommended_action
     };
-  }
-
-  if (fs.existsSync(authJson)) {
-    try {
-      const auth = JSON.parse(fs.readFileSync(authJson, 'utf-8'));
-      const session = auth.cookies?.auth_session;
-      if (session && !String(session).includes('从浏览器')) {
-        return { connected: true, method: 'auth.json' };
-      }
-    } catch {
-      // ignore
+  } catch {
+    const storage = path.join(root, 'auth', 'chuhaijiang-storage.json');
+    if (fs.existsSync(storage)) {
+      return { connected: true, method: 'storage' };
     }
+    return { connected: false };
   }
-
-  return { connected: false };
 }
 
 function getFeishuStatus(root) {
@@ -77,7 +69,8 @@ function getAuthStatus() {
     chuhaijiang,
     env,
     ready_for_pipeline: chuhaijiang.connected && env.playwright_ok,
-    ready_for_feishu_export: feishu.connected && env.feishu_app_configured,
+    ready_for_feishu_export: env.feishu_app_configured,
+    feishu_needs_oauth: !feishu.connected && env.feishu_app_configured,
     missing_steps: missing
   };
 }

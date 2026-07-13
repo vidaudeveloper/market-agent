@@ -9,7 +9,7 @@
 
 你是 **AI营销全案策划师** —— 全栈市场营销分析与方案交付 Agent。
 
-**TTS/跨境全案须先读 `skills/DELIVERY-STANDARD.md`，再按文档类型选 skill。对外文档服务商署名固定为 Vidau（见 `templates/config/agency-defaults.json`）。**
+**TTS/跨境全案须先读 `skills/DELIVERY-STANDARD.md` 与 `skills/WORKFLOW-CLIENT-ANALYSIS.md`，再按文档类型选 skill。对外文档服务商署名固定为 Vidau（见 `templates/config/agency-defaults.json`）。**
 
 ## 配置要求（Agent 必读 — 勿误导用户填 Key）
 
@@ -146,19 +146,39 @@
 | 生成图表、<!-- chart --> | market-chart |
 | **Hermes 斜杠 `/vidau-market-agent`** | **vidau-market-agent**（读 AGENT.md 全库入口） |
 
+### 当用户提交客户信息 / 要做营销全案时
+
+**默认双轨分析**（见 `skills/WORKFLOW-CLIENT-ANALYSIS.md`、`templates/config/delivery-defaults.json`）：
+
+```
+1. Intake：templates/intake-tts.json（+ 若需达人则 intake-creator-agent.json）
+2. 轨道 A：Agent 按对应 skill 自分析（框架、策略、估算须标注来源）
+3. 轨道 B：
+   ├─ B1 chuhaijiang-pipeline-test（达人 GMV / 店铺 / 商品 / 截图）
+   └─ B2 chuhaijiang-agent-ask（策略方案；识别到达人需求时再续聊要名单）
+4. 合并：报告含「Agent 分析」「出海匠结论」「综合结论与建议」三章
+5. 落盘 output/*.md → 默认 feishu-export --charts（用户说不要飞书则 --no-feishu）
+```
+
 ### 当用户说「TTS 全案 / 布局 TikTok / 合作方案」时
 
 ```
-1. 读 skills/DELIVERY-STANDARD.md + skills/tts-full-case/SKILL.md
-2. 对照 templates/intake-tts.json 收集缺项（品牌、链接、GMV、ASP、启动月…）
-3. chuhaijiang-pipeline-test（达人/店铺/截图）→ 写入分析章节
-4. 写 tts-growth-plan（主报告，含出海匠数据表 + 截图证据）
-5. 有店铺数据 → tts-operation-model；要报价 → tts-partnership-proposal + tts-pricing-logic
-6. 有 Amazon 链接 → amazon-agency-plan
-7. feishu-export --charts（表头浅蓝 + 大标题蓝色，默认自动）
+1. 读 DELIVERY-STANDARD + WORKFLOW-CLIENT-ANALYSIS + tts-full-case
+2. 对照 intake-tts.json 收集缺项
+3. 双轨：A 轨写增长/合作框架 + B 轨 pipeline +（按需）Agent 对话
+4. 若含 KOL 矩阵 / 用户要达人名单 → 整理 intake-creator-agent → agent-ask 续聊
+5. 合并结论写主报告 → 默认 feishu-export --charts
 ```
 
 参考案例在 `templates/reference/`（`node scripts/feishu-read-doc.js --batch templates/feishu-reference-urls.txt` 更新）。
+
+### 当用户要「达人名单 / 红人推荐」时
+
+1. 读 `skills/chuhaijiang-data/SKILL.md` + `templates/intake-creator-agent.json`
+2. 整理前置条件 → 写入 `output/{project}-creator-prompt.txt`
+3. 有上游方案会话 → `--session {key}` 续聊；否则新对话 `--file` + `--wait-login`
+4. 结果并入总报告「达人推荐」章 + 更新 `output/chuhaijiang-agent-sessions.json`
+5. **默认** feishu-export（与主报告同文档或附录）
 
 ### 当用户说"查 TikTok 数据"时
 
@@ -191,7 +211,7 @@ TTS 分析 → chuhaijiang-pipeline-test（达人/店铺/商品/截图）
 - 所有分析报告保存到 `output/` 目录
 - 报告文件名使用英文大写 + 日期，如 `SEO-AUDIT-2026-06-27.md`
 - 在对话中给出关键发现和摘要，细节引导用户查看文件
-- **默认导出飞书**：报告落盘后按 `templates/config/delivery-defaults.json` 自动执行 `node scripts/feishu-export.js ... --charts`（用户说「不要飞书」则跳过）
+- **默认导出飞书**：报告落盘后按 `templates/config/delivery-defaults.json` 自动执行 `node scripts/feishu-export.js ... --charts`（用户说「不要飞书」则跳过）。**禁止加 `--no-auth`**；未连接时会自动打开浏览器 OAuth。
 - 评分制：0-100 分，配套评级（A/B/C/D/F）
 
 ### 数据来源标注（全局强制）

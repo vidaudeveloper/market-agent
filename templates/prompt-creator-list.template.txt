@@ -1,0 +1,19 @@
+基于「{{brand_name}} · {{product_name}}」在 {{target_market}} 市场的宣发需求，请结合出海匠达人数据库，给出可直接用于 BD 的推荐达人具体名单。
+
+## 背景（来自上游方案摘要）
+{{upstream_plan_summary}}
+
+## 筛选标准
+- 目标受众：{{target_audience}}
+- 平台：{{platforms}}
+- 内容垂类：{{content_tags}}
+- KOL 预算：约 {{kol_budget_usd}} USD；金字塔：{{kol_pyramid}}
+- 互动率：TikTok≥{{tiktok_er}}%、Instagram≥{{instagram_er}}%
+- 引流目标：{{campaign_goal}}
+
+## 输出要求
+1. 按平台分表输出（TikTok / Instagram / YouTube / Facebook）
+2. 表格字段：{{output_table_fields}}
+3. 每平台至少 {{min_per_platform}} 个候选人；优先真实可查账号，附 BD 邮箱（如有）
+4. 标注数据来源（出海匠数据库 / 跨平台延伸 / 行业补充）
+5. 最后附「全平台达人推荐总表」汇总

@@ -16,6 +16,7 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 ## 必读
 
 - `skills/DELIVERY-STANDARD.md`
+- `skills/WORKFLOW-CLIENT-ANALYSIS.md`
 - `skills/tts-growth-plan/SKILL.md`
 - `skills/tts-partnership-proposal/SKILL.md`
 - `skills/tts-operation-model/SKILL.md`（有 TTS 店铺数据时）
@@ -29,16 +30,17 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 ```
 阶段 0 — Intake
   └─ 读 templates/intake-tts.json，缺项提问
+  └─ 若识别达人需求：读 templates/intake-creator-agent.json
 
-阶段 1 — 数据采集（分析环节，必做）
-  ├─ node scripts/chuhaijiang-pipeline-test.js --keyword "品类" [--export-feishu]
-  │    → 达人/店铺/商品表 + 出海匠截图证据
-  ├─ 或分步：chuhaijiang-fetch.js shop-ranking / product-search
-  ├─ WebFetch：Amazon 产品/店铺
-  └─ 可选：feishu-read 拉内部案例结构
+阶段 1 — 双轨数据采集（分析环节，必做）
+  ├─ 轨道 A：Agent 按 skill 框架自分析（WebFetch / 用户资料）
+  ├─ 轨道 B1：chuhaijiang-pipeline-test.js --keyword "品类"
+  │    → 达人/店铺/商品表 + 截图证据
+  └─ 轨道 B2（按需）：chuhaijiang-agent-ask.js
+       → 策略方案；达人需求时 --session 续聊名单
 
 阶段 2 — 主报告（必做）
-  └─ tts-growth-plan → 含出海匠数据表 + 截图引用章节
+  └─ tts-growth-plan → 含「Agent 分析」「出海匠结论」「综合结论」三章
 
 阶段 3 — 测算（有 TTS/Kalodata 数据时必做）
   └─ tts-operation-model → 引用出海匠对标数据

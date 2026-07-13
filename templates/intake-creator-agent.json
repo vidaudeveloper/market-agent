@@ -1,0 +1,47 @@
+{
+  "_purpose": "出海匠 Agent 对话查达人前的必填/选填清单。Agent 先整理成 prompt 文件再调用 chuhaijiang-agent-ask.js",
+  "project_key": "",
+  "brand_name": "",
+  "product_name": "",
+  "product_category": "",
+  "target_market": "US",
+  "target_audience": {
+    "age_range": "18-35",
+    "gender_focus": "女性为主",
+    "interests": ["Life & Lifestyle", "Home Decor", "Tech Review", "College Life"]
+  },
+  "platforms": ["TikTok", "Instagram", "YouTube", "Facebook"],
+  "campaign_goal": "亚马逊+独立站双引流",
+  "budget_usd": 80000,
+  "kol_budget_usd": 52000,
+  "kol_pyramid": {
+    "macro": "1-2人",
+    "mid": "5-8人/平台",
+    "micro": "10+人/平台",
+    "nano": "批量铺量"
+  },
+  "engagement_thresholds": {
+    "tiktok_min_er_pct": 4,
+    "instagram_min_er_pct": 3,
+    "youtube_min_completion_pct": 40
+  },
+  "output_table_fields": [
+    "达人昵称",
+    "@handle",
+    "粉丝量级",
+    "互动率",
+    "内容标签",
+    "合作层级",
+    "预估报价区间USD",
+    "推荐理由",
+    "亚马逊引流",
+    "独立站引流",
+    "BD邮箱"
+  ],
+  "min_candidates_per_platform": 10,
+  "prefer_real_accounts": true,
+  "agent_name": "社媒管家",
+  "upstream_plan_summary": "",
+  "amazon_link": "",
+  "standalone_site_url": ""
+}

@@ -5,9 +5,59 @@
     "auto_after_report": true,
     "skip_flag": "--no-feishu"
   },
+  "analysis": {
+    "dual_track": true,
+    "track_a": "agent_skill_analysis",
+    "track_b": ["chuhaijiang_pipeline", "chuhaijiang_agent_chat"],
+    "merge_section_title": "综合结论与建议",
+    "workflow_doc": "skills/WORKFLOW-CLIENT-ANALYSIS.md"
+  },
+  "chuhaijiang": {
+    "auto_pipeline": true,
+    "merge_into_report": true,
+    "keyword_priority": ["brand_name", "category_keyword", "product_keyword"],
+    "pipeline_script": "scripts/chuhaijiang-pipeline-test.js",
+    "agent_ask_script": "scripts/chuhaijiang-agent-ask.js",
+    "sessions_file": "output/chuhaijiang-agent-sessions.json",
+    "applies_to_skills": [
+      "tts-growth-plan",
+      "tts-full-case",
+      "tts-partnership-proposal",
+      "tts-operation-model",
+      "chuhaijiang-data",
+      "amazon-agency-plan"
+    ],
+    "_note": "TTS 类报告写竞品章前默认跑 pipeline；策略/达人名单用 agent-ask 对话。"
+  },
+  "creator_agent": {
+    "enabled": true,
+    "intake_template": "templates/intake-creator-agent.json",
+    "prompt_template": "templates/prompt-creator-list.template.txt",
+    "default_agent": "社媒管家",
+    "auto_trigger_when": [
+      "用户明确要求达人名单/红人列表/KOL matrix",
+      "方案含 KOL 预算分配但未给具体 @handle",
+      "合作 Package 含量化达人视频交付"
+    ],
+    "merge_into_report": true,
+    "export_feishu_with_report": true,
+    "default_language": "zh-CN",
+    "outreach_auto_followup": false,
+    "_note": "outreach=达人邀约话术；当前默认中文交付，不自动追问英文 outreach"
+  },
+  "auth": {
+    "login_check_script": "scripts/chuhaijiang-auth-check.js",
+    "login_command": "scripts/chuhaijiang-fetch.js screenshot --login",
+    "strategy": "先检测 auth_session → 无效则 headed 登录 → agent-ask 可 --wait-login",
+    "_note": "以 auth_session 有效为准；storage 存在但无 session 视为未登录"
+  },
   "feishu": {
     "title_suffix": "",
-    "folder_token_env": "FEISHU_DEFAULT_FOLDER_TOKEN"
+    "folder_token_env": "FEISHU_DEFAULT_FOLDER_TOKEN",
+    "auto_auth": true,
+    "export_flags": ["--charts"],
+    "_note": "未连接飞书时 export 自动打开浏览器 OAuth，禁止 Agent 加 --no-auth"
   },
-  "_note": "报告写入 output/ 后，Agent 默认执行 feishu-export --charts。用户说「不要飞书」或传 --no-feishu 时跳过。"
+  "_workflow": "Intake → 轨道A自分析 + 轨道B(pipeline+对话) → 合并结论 → [若需达人]对话查名单 → output/*.md → feishu-export --charts",
+  "_note": "报告写入 output/ 后默认 feishu-export --charts。用户说「不要飞书」或 --no-feishu 时跳过。"
 }

@@ -22,6 +22,7 @@ const {
   feishuJson,
   getUserAuthStatus,
   ensureDocumentEditable,
+  patchTableColumnHyperlinks,
   insertChartsIntoDocument,
   styleFeishuTableHeaders,
   styleFeishuDocumentTitle,
@@ -32,6 +33,7 @@ const {
 } = require('./feishu-lib');
 const { generateChartsFromMarkdown } = require('./chart-markdown');
 const { sanitizeMarkdownForFeishu } = require('./markdown-feishu-sanitize');
+const { splitMarkdownChunksSafe } = require('./feishu-chunk-utils');
 const { hasApiKey } = require('./ai-lib');
 
 const INSERT_PERMISSION_HINT =
@@ -70,45 +72,7 @@ function resolveFirstLevelBlockIds(converted, descendants) {
 }
 
 function splitMarkdownChunks(markdown) {
-  const text = markdown.trim();
-  if (!text) return ['# 暂无内容\n\n'];
-
-  const sections = text.split(/\n(?=#{2,3} )/);
-  const chunks = [];
-  let current = '';
-
-  for (const section of sections) {
-    const piece = current ? `${current}\n${section}` : section;
-    if (piece.length > 6000 && current) {
-      chunks.push(current.trim());
-      current = section;
-    } else {
-      current = piece;
-    }
-  }
-  if (current.trim()) chunks.push(current.trim());
-
-  const final = [];
-  for (const chunk of chunks) {
-    if (chunk.length <= 6000) {
-      final.push(chunk);
-      continue;
-    }
-    const lines = chunk.split('\n');
-    let part = '';
-    for (const line of lines) {
-      const next = part ? `${part}\n${line}` : line;
-      if (next.length > 6000 && part) {
-        final.push(part.trim());
-        part = line;
-      } else {
-        part = next;
-      }
-    }
-    if (part.trim()) final.push(part.trim());
-  }
-
-  return final.length ? final : [text];
+  return splitMarkdownChunksSafe(markdown, 8000);
 }
 
 async function convertMarkdownChunk(token, chunk) {
@@ -200,11 +164,11 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
   }
 
   if (options.styleTableHeaders !== false) {
-    console.log('🎨 正在设置表格表头单元格浅蓝底色…');
+    console.log('🎨 正在设置表格表头加粗…');
     const styled = await styleFeishuTableHeaders(userAccessToken, documentId, {
-      headerCellBackground: options.headerCellBackground || 'LightBlueBackground'
+      enabled: options.styleTableHeaders !== false
     });
-    if (styled) console.log(`   已设置 ${styled} 个表头单元格`);
+    if (styled) console.log(`   已加粗 ${styled} 个表头单元格`);
   }
 
   if (options.styleDocumentTitle !== false) {
@@ -218,15 +182,34 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
   if (options.tableEmbeds?.length) {
     console.log('🖼️  正在嵌入表格头像/产品图…');
     for (const embed of options.tableEmbeds) {
-      const count = await embedImagesInTableColumn(
+      try {
+        const count = await embedImagesInTableColumn(
+          userAccessToken,
+          documentId,
+          embed.tableIndex,
+          embed.columnIndex,
+          embed.imagePaths,
+          embed.options || {}
+        );
+        console.log(`   表格#${embed.tableIndex} 列${embed.columnIndex}: ${count} 张`);
+      } catch (err) {
+        console.warn(`   ⚠ 表格#${embed.tableIndex} 图片嵌入失败: ${err.message}`);
+      }
+    }
+  }
+
+  if (options.linkPatches?.length) {
+    console.log('🔗 正在修复表格外链…');
+    for (const patch of options.linkPatches) {
+      const count = await patchTableColumnHyperlinks(
         userAccessToken,
         documentId,
-        embed.tableIndex,
-        embed.columnIndex,
-        embed.imagePaths,
-        embed.options || {}
+        patch.tableIndex,
+        patch.columnIndex,
+        patch.links,
+        patch.options || {}
       );
-      console.log(`   表格#${embed.tableIndex} 列${embed.columnIndex}: ${count} 张`);
+      console.log(`   表格#${patch.tableIndex} 列${patch.columnIndex}: ${count} 个外链`);
     }
   }
 
@@ -249,12 +232,16 @@ module.exports = { exportMarkdownToFeishu };
 
 if (require.main === module) {
 (async () => {
-  const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
-  const flags = new Set(process.argv.slice(2).filter(a => a.startsWith('--')));
+  const argv = process.argv.slice(2);
+  const flags = new Set(argv.filter(a => a.startsWith('--')));
+  const args = argv.filter(a => !a.startsWith('--'));
   const autoAuth = !flags.has('--no-auth');
 
+  const embedsIdx = argv.indexOf('--embeds-json');
+  const embedsJsonPath = embedsIdx >= 0 ? path.resolve(argv[embedsIdx + 1]) : null;
+
   if (!args[0]) {
-    console.log('用法: node scripts/feishu-export.js <markdown文件> [文档标题] [--charts] [--charts-ai] [--all-charts] [--no-auth]');
+    console.log('用法: node scripts/feishu-export.js <markdown文件> [文档标题] [--charts] [--charts-ai] [--all-charts] [--embeds-json <json>] [--no-auth]');
     process.exit(0);
   }
 
@@ -277,11 +264,27 @@ if (require.main === module) {
     }
 
     console.log('📤 正在导出到你的飞书…');
+
+    let tableEmbeds = [];
+    let linkPatches = [];
+    if (embedsJsonPath) {
+      if (!fs.existsSync(embedsJsonPath)) {
+        console.error('embeds-json 文件不存在:', embedsJsonPath);
+        process.exit(1);
+      }
+      const embedConfig = JSON.parse(fs.readFileSync(embedsJsonPath, 'utf-8'));
+      tableEmbeds = embedConfig.tableEmbeds || [];
+      linkPatches = embedConfig.linkPatches || [];
+      console.log(`   已加载 ${tableEmbeds.length} 组图片嵌入、${linkPatches.length} 组外链修复`);
+    }
+
     const result = await exportMarkdownToFeishu(markdown, title, env, accessToken, auth, {
       withCharts: flags.has('--charts') || flags.has('--all-charts') || flags.has('--charts-ai'),
       allChartTables: flags.has('--all-charts'),
       chartEngine: flags.has('--charts-ai') ? 'ai' : 'quickchart',
-      chartFallbackAi: !flags.has('--charts-ai') && hasApiKey(env)
+      chartFallbackAi: !flags.has('--charts-ai') && hasApiKey(env),
+      tableEmbeds,
+      linkPatches
     });
     console.log('\n✅ 导出成功!');
     console.log('标题:', result.title);

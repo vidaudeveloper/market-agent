@@ -201,6 +201,63 @@ server.tool(
 );
 
 server.tool(
+  'chuhaijiang_agent_ask',
+  '出海匠 Agent 对话：提问并抓取回复。支持续聊 session、达人名单追问。需登录态；未登录时先 auth_chuhaijiang_login。',
+  {
+    prompt_file: z
+      .string()
+      .describe('prompt 文件路径，如 output/ktc-followup-creators-prompt.txt'),
+    session_key: z.string().optional().describe('续聊会话 key，见 output/chuhaijiang-agent-sessions.json'),
+    out_suffix: z.string().optional().describe('输出文件名后缀，如 KTC达人名单'),
+    timeout_sec: z.number().int().min(60).max(1800).optional().describe('等待回复秒数，默认 900'),
+    headed: z.boolean().optional().describe('有界面模式，默认 true（便于登录）')
+  },
+  async ({ prompt_file, session_key, out_suffix, timeout_sec = 900, headed = true }) => {
+    const root = getRoot();
+    const status = getAuthStatus();
+    if (!status.ready_for_pipeline) {
+      return textResult(
+        {
+          ok: false,
+          message: '环境未就绪（Playwright/登录）',
+          missing_steps: status.missing_steps,
+          hint: '先 auth_chuhaijiang_login'
+        },
+        { isError: true }
+      );
+    }
+
+    const args = ['--file', prompt_file, '--timeout', String(timeout_sec)];
+    if (headed) args.push('--headed', '--wait-login');
+    if (session_key) args.push('--session', session_key);
+    if (out_suffix) args.push('--out-suffix', out_suffix);
+
+    const result = await runNodeScript('scripts/chuhaijiang-agent-ask.js', args, {
+      timeout: (timeout_sec + 120) * 1000
+    });
+
+    if (result.code !== 0) {
+      return textResult(
+        { ok: false, message: 'agent-ask 失败', stderr: result.stderr, stdout: result.stdout },
+        { isError: true }
+      );
+    }
+
+    const suffix = out_suffix ? `-${out_suffix}` : '';
+    const date = new Date().toISOString().slice(0, 10);
+    const replyMd = `output/出海匠Agent回复${suffix}-${date}.md`;
+    const replyJson = `output/出海匠Agent回复${suffix}-${date}.json`;
+
+    return textResult({
+      ok: true,
+      reply_md: replyMd,
+      reply_json: replyJson,
+      stdout_tail: result.stdout.split('\n').slice(-12).join('\n')
+    });
+  }
+);
+
+server.tool(
   'feishu_export',
   '将 output/ 下的 Markdown 报告导出到当前用户飞书云文档（含 QuickChart 图表）。',
   {
@@ -215,12 +272,16 @@ server.tool(
       return textResult(
         {
           ok: false,
-          message: '飞书未就绪',
+          message: '飞书未就绪（缺少 .env 应用凭证）',
           missing_steps: status.missing_steps,
-          hint: '先配置 .env 并调用 auth_feishu_connect'
+          hint: '在 .env 配置 FEISHU_APP_ID / FEISHU_APP_SECRET'
         },
         { isError: true }
       );
+    }
+
+    if (status.feishu_needs_oauth) {
+      // 导出脚本会自动打开浏览器完成 OAuth，此处不阻断
     }
 
     const abs = path.isAbsolute(report_path) ? report_path : path.join(root, report_path);

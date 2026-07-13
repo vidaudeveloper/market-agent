@@ -4,7 +4,7 @@
 
 **仓库：** [github.com/vidaudeveloper/market-agent](https://github.com/vidaudeveloper/market-agent)
 
-**Hermes / Agent 一键安装：** 复制 [`INSTALL-PROMPT.md`](INSTALL-PROMPT.md) 里的英文提示词；斜杠技能见 [`HERMES.md`](HERMES.md)（`/vidau-market-agent`）。
+**Hermes / Agent 一键安装：** 同事请看 **[`同事安装指南.md`](同事安装指南.md)**；高级用户可用 [`INSTALL-PROMPT.md`](INSTALL-PROMPT.md) 英文提示词。斜杠技能见 [`HERMES.md`](HERMES.md)（`/vidau-market-agent`）。
 
 把这个文件夹放进 Cursor / WorkBuddy / Hermes 等 AI 助手中，即可获得完整的市场营销全案工作台。AI 会读取 `skills/` 技能库，执行品牌分析、竞品调研、SEO 审计、广告创意、上市策划、**飞书文档导出**等任务。
 
@@ -29,7 +29,7 @@
 | 配置项 | 谁需要填 | 何时需要 |
 |--------|----------|----------|
 | **无**（用 Hermes/Agent 写报告） | 普通用户 | 直接对话，**不要填 AI_API_KEY** |
-| `FEISHU_APP_ID` / `SECRET` | **无需自填** | 仓库 `.env` 已预配（内部共用） |
+| `FEISHU_APP_ID` / `SECRET` | **向管理员索取** | 复制 `.env.example` → `.env` 后填入；**不在 Git 仓库中** |
 | 飞书 OAuth「同意」 | 各用户本机一次 | `feishu-connect.bat` 浏览器授权 |
 | `AI_API_KEY` | 可选 | 仅 `ai-analyze.js` 或 `--charts-ai` |
 | `auth.json` | 各用户 | 仅出海匠 TikTok 数据 |
@@ -38,7 +38,8 @@
 git clone https://github.com/vidaudeveloper/market-agent.git
 cd market-agent
 npm install             # 或双击 setup.bat
-# .env 已含飞书凭证；首次导出前运行 feishu-connect.bat
+# 复制 .env.example → .env，填入管理员提供的飞书凭证
+# 首次导出前运行 feishu-connect.bat
 ```
 
 ### 3️⃣ 在 Cursor / Hermes 中打开本文件夹

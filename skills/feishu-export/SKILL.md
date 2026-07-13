@@ -190,6 +190,53 @@ npm run feishu:export -- output/报告文件.md "标题" -- --charts
 
 含数字的数据块须遵守 `skills/DATA-SOURCE.md`，导出时**保留**来源标注行。
 
+## 含头像/外链的表格（达人表、店铺表 — **必遵守**）
+
+出海匠 pipeline、TTS 全案达人章等含**头像 + 出海匠/TikTok 双链接**时，须走「占位符 Markdown + 导出后 API 补丁」，不可把 URL 直接写在表格单元格。
+
+### 禁止写法（会导致飞书异常）
+
+```markdown
+| 头像 | 出海匠 | TikTok |
+| ![](https://oss-th.chuhaijiang.com/...) | [链接](https://www.chuhaijiang.com/...) | [@user](https://www.tiktok.com/@user) |
+```
+
+常见问题：头像显示上传失败；点击链接跳转飞书文档而非外站；出海匠 keyword 搜索页无结果。
+
+### 正确写法
+
+**1. Markdown 表格** — 占位符：
+
+```markdown
+| # | 头像 | 达人 | 出海匠链接 | TikTok |
+| 1 | · | 昵称 | 链接 | @handle |
+```
+
+**2. 头像** — 本地下载后 `tableEmbeds` 上传：
+
+- `scripts/chuhaijiang-image-utils.js` → `downloadEntityImagesWithFallback`
+- OSS 签名 URL 会 403 过期；兜底 `unavatar.io/tiktok/{handle}`
+
+**3. 外链** — 导出后用 `linkPatches`：
+
+- 出海匠详情：`/app/discover/tiktok/creators/{creatorId}?country=TH`（`country` 大写；`creatorId` 用 MCP `id`）
+- TikTok：`https://www.tiktok.com/@{handle}`
+- 实现：`feishu-lib.js` → `patchTableColumnHyperlinks`
+
+**4. 导出命令**：
+
+```bash
+node scripts/feishu-export.js output/报告.md "标题" --embeds-json output/项目-embeds.json --charts
+```
+
+或由 pipeline / `build-anta-feishu-test.js` 内联传入 `tableEmbeds` + `linkPatches`（见 `scripts/feishu-export.js`）。
+
+**5. 表头**：`styleFeishuTableHeaders` 仅加粗，不加背景色。
+
+**6. 长表**：`feishu-chunk-utils.js` → `splitMarkdownChunksSafe` 保持表格完整。
+
+参考验收文档：`output/ANTA-达人表飞书测试-*.md` + `scripts/build-anta-feishu-test.js`。
+
 ## 图表插图（QuickChart 优先，按需插入）
 
 Mermaid 在飞书中**不会渲染**。在需要可视化的表格前加 `<!-- chart -->` 标记，导出时自动用 QuickChart 生成 PNG 并**插入到对应表格后**（非文末）。
@@ -264,7 +311,8 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 | 20029 重定向 URL 有误 | 检查飞书开放平台回调 URL 是否已添加并发布应用 |
 | 8787 端口被占用 | 关闭其他授权窗口；或 `netstat -ano \| findstr :8787` 后结束占用进程 |
 | Agent 找不到授权入口 | 直接执行本 skill 中的 shell 命令，不要等待 UI 按钮 |
-| 云端 Agent 无法授权 | 在本机终端手动运行 `node scripts/feishu-auth.js` 后再导出 |
+| 头像上传失败 / 链接跳飞书 | 改用 `·` + `链接` 占位 + `--embeds-json`；见「含头像/外链的表格」 |
+| 出海匠链接 404 或无结果 | 用详情直链 `/creators/{creatorId}?country=TH`，勿用 `?keyword=` |
 
 ## Agent 禁止事项
 
@@ -282,4 +330,6 @@ node scripts/feishu-insert-charts.js --doc <documentId> --markdown output/报告
 - `scripts/feishu-insert-charts.js` — 已有飞书文档按需插图
 - `scripts/chart-gen.js` — QuickChart 底层
 - `scripts/ai-chart.js` — 兼容入口
-- `scripts/feishu-lib.js` — 飞书共享库（Agent 一般不直接调用）
+- `scripts/feishu-chunk-utils.js` — 表格安全分段
+- `scripts/chuhaijiang-image-utils.js` — 头像下载与出海匠链接解析
+- `scripts/build-anta-feishu-test.js` — 达人表飞书导出验收脚本

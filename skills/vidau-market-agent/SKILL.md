@@ -42,11 +42,12 @@ npm install
 
 ```
 1. 读工作区根目录 AGENT.md
-2. 读 skills/DELIVERY-STANDARD.md
+2. 读 skills/DELIVERY-STANDARD.md + skills/WORKFLOW-CLIENT-ANALYSIS.md
 3. 若已配置 vidau-market MCP → 优先调 MCP tools（见 MCP-USER-GUIDE.md），勿手写 shell
 4. 按用户意图选子 skill（见 AGENT.md 路由表）
-5. 报告写入 output/
-6. 默认导出飞书：feishu_export 或 node scripts/feishu-export.js output/xxx.md "标题" --charts
+5. 客户任务：**默认双轨**（Agent 自分析 + 出海匠 pipeline/对话）→ 合并结论
+6. 识别达人需求 → intake-creator-agent → agent-ask 续聊名单
+7. 报告写入 output/ → **默认** feishu_export / feishu-export --charts
 ```
 
 ### MCP 优先规则
@@ -59,6 +60,7 @@ npm install
 | 飞书连接 | `auth_feishu_connect` |
 | 出海匠登录 | `auth_chuhaijiang_login` |
 | TikTok 数据采集 | `chuhaijiang_pipeline` |
+| Agent 对话 / 达人名单 | `chuhaijiang_agent_ask` |
 | 导出飞书 | `feishu_export` |
 | 列/读报告 | `list_reports` / `read_report` |
 

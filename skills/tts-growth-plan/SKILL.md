@@ -32,13 +32,20 @@ description: "TikTok市场分析+选品+打品+执行计划。触发词：TikTok
 
 ```
 1. 填写 intake-tts.json 或对话收集
-2. WebFetch Amazon；chuhaijiang 竞品/类目
-3. 写 ❗【核心结论】3–6 条（见下方排版规范）
-4. 按模板填八章；选品表必须含「暂缓」项及理由
-5. 目标拆解：年 GMV → 年订单 → 月/日
-6. 执行计划：从 launch_month 起，周/月节点
-7. chart ≥2；**默认** feishu-export --charts（`templates/config/delivery-defaults.json`）
+2. **默认** 出海匠 pipeline（见 delivery-defaults.json）：
+   node scripts/chuhaijiang-pipeline-test.js --keyword "{品牌或品类}"
+   → 将达人/店铺/商品表 + 截图并入第三章「竞品调研」
+3. WebFetch Amazon 产品页
+4. 写 ❗【核心结论】3–6 条（见下方排版规范）
+5. 按模板填八章；选品表必须含「暂缓」项及理由
+6. 目标拆解：年 GMV → 年订单 → 月/日
+7. 执行计划：从 launch_month 起，周/月节点
+8. chart ≥2
+9. 报告落盘 output/{BRAND}-TTS增长全案-{DATE}.md
+10. **默认** feishu-export --charts（用户未说「不要飞书」则自动执行）
 ```
+
+> 编排顺序固定为：**出海匠数据 → 写报告 → 飞书导出**。有 MCP 时优先 `chuhaijiang_pipeline` + `feishu_export`。
 
 ## 强制章节
 

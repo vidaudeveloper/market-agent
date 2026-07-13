@@ -125,16 +125,32 @@
 - 报告末尾 `## 数据来源汇总`
 - 禁止无来源的精确数字
 
-### 2.7 飞书导出（默认开启）
+### 2.7 双轨分析与达人对话（默认）
+
+读取 `skills/WORKFLOW-CLIENT-ANALYSIS.md` 与 `delivery-defaults.json`：
+
+| 配置 | 默认值 | 说明 |
+|------|--------|------|
+| `analysis.dual_track` | **true** | 客户任务默认：Agent 自分析 + 出海匠数据/对话 |
+| `creator_agent.enabled` | **true** | 识别达人需求时走对话查名单 |
+| `creator_agent.intake_template` | `templates/intake-creator-agent.json` | 对话前必填清单 |
+| `chuhaijiang.agent_ask_script` | `chuhaijiang-agent-ask.js` | 策略与达人 BD 名单 |
+| `chuhaijiang.sessions_file` | `output/chuhaijiang-agent-sessions.json` | 续聊索引 |
+
+### 2.8 飞书导出（默认开启）
 
 读取 `templates/config/delivery-defaults.json`：
 
 | 配置 | 默认值 | 说明 |
 |------|--------|------|
+| `chuhaijiang.auto_pipeline` | **true** | TTS 类报告写竞品章前**默认**跑 `chuhaijiang-pipeline-test.js` |
+| `chuhaijiang.merge_into_report` | **true** | 达人/店铺/商品表 + 截图并入报告，不单开附件 |
 | `export.feishu` | **true** | 报告落盘 `output/` 后自动导出飞书 |
 | `export.charts` | **true** | 有 `<!-- chart -->` 时加 `--charts` |
 | `export.auto_after_report` | **true** | TTS/Amazon 全案完成后自动执行，无需用户再说「导出飞书」 |
 | `export.skip_flag` | `--no-feishu` | 用户明确不要飞书时使用 |
+
+**标准流程**：`Intake` → `双轨分析` → `[达人对话]` → `output/*.md` → `feishu-export --charts`
 
 命令：`node scripts/feishu-export.js output/xxx.md "标题" --charts`
 
@@ -143,6 +159,9 @@
 ## 4. 导出前自检（Agent 必做）
 
 - [ ] 文档类型与 skill 匹配
+- [ ] **双轨分析已完成并合并**（见 WORKFLOW-CLIENT-ANALYSIS.md）
+- [ ] 已跑出海匠 pipeline 并并入报告（TTS 类默认）
+- [ ] 达人需求已整理 intake-creator-agent 并走 agent-ask（若触发）
 - [ ] 有核心结论或执行摘要
 - [ ] 含 30/90 天或渠道结构（或已标注估算）
 - [ ] 竞品 ≥2 且有「启示」或对标表

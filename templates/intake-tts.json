@@ -17,6 +17,10 @@
   "inventory_sku_count": "",
   "competitor_keywords": ["electric trike", "adult electric bike"],
   "competitor_shop_names": [],
+  "session_key": "",
+  "need_creator_list": false,
+  "chuhaijiang_agent": "社媒管家",
+  "_session_key_note": "命名：{品牌拼音}_{场景}，如 ktc_gumi_launch；写入 output/chuhaijiang-agent-sessions.json",
   "deliverables": {
     "bgc_videos_90d": 180,
     "creator_videos_90d": 180,

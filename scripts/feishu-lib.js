@@ -430,10 +430,13 @@ async function ensureUserAuth(env, options = {}) {
   }
 
   if (options.autoAuth === false) {
-    throw new Error('未连接飞书。请先运行：node scripts/feishu-auth.js');
+    throw new Error(
+      '未连接飞书。请去掉 --no-auth 重新导出（将自动打开浏览器授权），或先运行：node scripts/feishu-auth.js'
+    );
   }
 
-  console.log('📎 尚未连接飞书，即将打开浏览器完成授权…');
+  console.log('📎 尚未连接飞书，即将自动打开浏览器完成授权…');
+  console.log('   请在浏览器中点击「同意授权」，完成后将自动继续导出');
   const saved = await runOAuthFlow(env, options);
   return { accessToken: saved.access_token, auth: saved };
 }
@@ -588,7 +591,12 @@ function buildReplaceImageBody(fileToken, imagePath, options = {}) {
 
 async function uploadImageToBlock(accessToken, documentId, imageBlockId, imagePath, options = {}) {
   const path = require('path');
-  const { body, buffer } = buildReplaceImageBody('', imagePath, options);
+  const fs = require('fs');
+  const buffer = fs.readFileSync(imagePath);
+  if (!isValidImageBuffer(buffer)) {
+    throw new Error(`不是有效图片文件: ${imagePath}`);
+  }
+  const { body } = buildReplaceImageBody('', imagePath, options);
   const fileName = path.basename(imagePath);
 
   const form = new FormData();
@@ -899,10 +907,11 @@ async function listAllDocumentBlocks(accessToken, documentId) {
 }
 
 /**
- * 表头行：仅单元格浅蓝底（禁用 header_row 灰底，不用文字高亮）
+ * 表头：仅加粗，不填充背景色（飞书 Docx API 无法整格铺色）
  */
 async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
-  const cellBg = options.headerCellBackground || 'LightBlueBackground';
+  if (options.enabled === false) return 0;
+
   const tableBlocks = await listDocumentTableBlocks(accessToken, documentId);
   const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
   let styled = 0;
@@ -913,18 +922,13 @@ async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
     const colSize = table.property.column_size;
     const headerCellIds = table.cells.slice(0, colSize);
 
-    // 关闭飞书默认标题行灰底（与浅蓝底叠色）
     try {
       await feishuJson(
         accessToken,
         `/docx/v1/documents/${documentId}/blocks/${blockId}`,
         {
           method: 'PATCH',
-          body: JSON.stringify({
-            update_table_property: {
-              header_row: false
-            }
-          })
+          body: JSON.stringify({ update_table_property: { header_row: false } })
         }
       );
     } catch {
@@ -939,38 +943,21 @@ async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
         const textBlock = allBlocks[childId];
         if (!textBlock || textBlock.block_type !== 2) continue;
 
-        try {
-          await feishuJson(
-            accessToken,
-            `/docx/v1/documents/${documentId}/blocks/${childId}`,
-            {
-              method: 'PATCH',
-              body: JSON.stringify({
-                update_text_style: {
-                  style: { background_color: cellBg, align: 2 },
-                  fields: [6, 1]
-                }
-              })
-            }
-          );
-          styled++;
-        } catch (err) {
-          console.warn(`   ⚠ 表头单元格背景失败 (${childId}): ${err.message}`);
-        }
-
         const elements = textBlock.text?.elements || [];
         if (!elements.length) continue;
+
         const updated = elements.map(el => {
           if (!el.text_run) return el;
           const prev = el.text_run.text_element_style || {};
           const { background_color, text_color, ...rest } = prev;
           return {
             text_run: {
-              content: el.text_run.content || '',
+              content: (el.text_run.content || '').replace(/　+$/g, ''),
               text_element_style: { ...rest, bold: true }
             }
           };
         });
+
         try {
           await feishuJson(
             accessToken,
@@ -980,14 +967,110 @@ async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
               body: JSON.stringify({ update_text_elements: { elements: updated } })
             }
           );
-        } catch {
-          // 加粗失败不阻断
+          await feishuJson(
+            accessToken,
+            `/docx/v1/documents/${documentId}/blocks/${childId}`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({
+                update_text_style: {
+                  style: { align: 2 },
+                  fields: [1]
+                }
+              })
+            }
+          );
+          styled++;
+        } catch (err) {
+          console.warn(`   ⚠ 表头加粗失败 (${childId}): ${err.message}`);
         }
       }
     }
   }
 
   return styled;
+}
+
+function encodeFeishuLink(url) {
+  return encodeURIComponent(String(url || '').trim());
+}
+
+function isValidImageBuffer(buffer) {
+  if (!buffer || buffer.length < 12) return false;
+  const head = buffer.slice(0, 12);
+  if (head[0] === 0x89 && head[1] === 0x50 && head[2] === 0x4e && head[3] === 0x47) return true;
+  if (head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff) return true;
+  if (head.toString('ascii', 0, 4) === 'RIFF' && head.toString('ascii', 8, 12) === 'WEBP') return true;
+  const text = head.toString('utf8', 0, Math.min(20, buffer.length)).trim();
+  if (text.startsWith('<svg') || text.startsWith('<?xml')) return false;
+  return false;
+}
+
+/**
+ * 为表格指定列写入可点击外链（避免飞书把裸 URL 识别成文档内链）
+ */
+async function patchTableColumnHyperlinks(accessToken, documentId, tableIndex, columnIndex, links, options = {}) {
+  const tableBlocks = await listDocumentTableBlocks(accessToken, documentId);
+  const target = tableBlocks[tableIndex];
+  if (!target) {
+    console.warn(`   ⚠ 表格索引 ${tableIndex} 不存在，跳过链接修复`);
+    return 0;
+  }
+
+  const table = target.block.table;
+  const colSize = table.property.column_size;
+  const rowSize = table.property.row_size;
+  const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
+  let patched = 0;
+
+  for (let row = 1; row < rowSize && row - 1 < links.length; row++) {
+    const item = links[row - 1];
+    const url = typeof item === 'string' ? item : item?.url;
+    if (!url || !/^https?:\/\//i.test(url)) continue;
+
+    const label =
+      (typeof item === 'object' && item?.label) ||
+      options.labelFromUrl?.(url) ||
+      url.replace(/^https?:\/\//, '').slice(0, 48);
+
+    const cellIndex = row * colSize + columnIndex;
+    const cellId = table.cells[cellIndex];
+    const cellBlock = allBlocks[cellId];
+    if (!cellBlock?.children?.length) continue;
+
+    for (const childId of cellBlock.children) {
+      const textBlock = allBlocks[childId];
+      if (!textBlock || textBlock.block_type !== 2) continue;
+
+      const elements = [
+        {
+          text_run: {
+            content: label,
+            text_element_style: {
+              link: { url: encodeFeishuLink(url) },
+              underline: true
+            }
+          }
+        }
+      ];
+
+      try {
+        await feishuJson(
+          accessToken,
+          `/docx/v1/documents/${documentId}/blocks/${childId}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify({ update_text_elements: { elements } })
+          }
+        );
+        patched++;
+      } catch (err) {
+        console.warn(`   ⚠ 链接修复失败 row ${row}: ${err.message}`);
+      }
+    }
+  }
+
+  return patched;
 }
 
 /** 文档首个一级标题设为蓝色（FontColor=5） */
@@ -1069,37 +1152,47 @@ async function embedImagesInTableColumn(accessToken, documentId, tableIndex, col
   let inserted = 0;
 
   for (let row = 1; row < rowSize && row - 1 < imagePaths.length; row++) {
-    const imgPath = imagePaths[row - 1];
-    if (!imgPath || !require('fs').existsSync(imgPath)) continue;
+    try {
+      const imgPath = imagePaths[row - 1];
+      if (!imgPath || !require('fs').existsSync(imgPath)) continue;
 
-    const cellIndex = row * colSize + columnIndex;
-    const cellId = table.cells[cellIndex];
-    const cellBlock = allBlocks[cellId];
-    if (!cellBlock) continue;
-
-    await clearTableCellChildren(accessToken, documentId, cellBlock, allBlocks);
-
-    const created = await feishuJson(
-      accessToken,
-      `/docx/v1/documents/${documentId}/blocks/${cellId}/children`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          index: 0,
-          children: [{ block_type: 27, image: {} }]
-        })
+      const buf = require('fs').readFileSync(imgPath);
+      if (!isValidImageBuffer(buf)) {
+        console.warn(`   ⚠ 跳过无效图片: ${imgPath}`);
+        continue;
       }
-    );
 
-    const imageBlockId = created.children?.[0]?.block_id;
-    if (!imageBlockId) continue;
+      const cellIndex = row * colSize + columnIndex;
+      const cellId = table.cells[cellIndex];
+      const cellBlock = allBlocks[cellId];
+      if (!cellBlock) continue;
 
-    await uploadImageToBlock(accessToken, documentId, imageBlockId, imgPath, {
-      maxWidth,
-      exactWidth: maxWidth,
-      exactHeight: maxHeight
-    });
-    inserted++;
+      await clearTableCellChildren(accessToken, documentId, cellBlock, allBlocks);
+
+      const created = await feishuJson(
+        accessToken,
+        `/docx/v1/documents/${documentId}/blocks/${cellId}/children`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            index: 0,
+            children: [{ block_type: 27, image: {} }]
+          })
+        }
+      );
+
+      const imageBlockId = created.children?.[0]?.block_id;
+      if (!imageBlockId) continue;
+
+      await uploadImageToBlock(accessToken, documentId, imageBlockId, imgPath, {
+        maxWidth,
+        exactWidth: maxWidth,
+        exactHeight: maxHeight
+      });
+      inserted++;
+    } catch (err) {
+      console.warn(`   ⚠ 行 ${row} 图片上传失败: ${err.message}`);
+    }
   }
 
   return inserted;
@@ -1307,6 +1400,8 @@ module.exports = {
   styleFeishuTableHeaders,
   styleFeishuDocumentTitle,
   embedImagesInTableColumn,
+  patchTableColumnHyperlinks,
+  isValidImageBuffer,
   attachChartsToTableBlocks,
   insertMarkdownBlocksAtIndex,
   insertLocalImageIntoDocument,
