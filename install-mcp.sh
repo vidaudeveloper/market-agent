@@ -10,23 +10,16 @@ if [[ ! -f "$MCP_INDEX" ]]; then
   exit 1
 fi
 
-mkdir -p "$ROOT/.cursor"
+node -e "
+const { mergeMcpJson } = require('./scripts/merge-mcp-json');
+mergeMcpJson(process.argv[1], 'vidau-market', {
+  command: 'node',
+  args: [process.argv[2]],
+  env: { VIDAU_MARKET_ROOT: process.argv[3] }
+});
+console.log('[OK] 已合并 vidau-market →', process.argv[1]);
+" "$CURSOR_MCP" "$MCP_INDEX" "$ROOT"
 
-cat > "$CURSOR_MCP" <<EOF
-{
-  "mcpServers": {
-    "vidau-market": {
-      "command": "node",
-      "args": ["$MCP_INDEX"],
-      "env": {
-        "VIDAU_MARKET_ROOT": "$ROOT"
-      }
-    }
-  }
-}
-EOF
-
-echo "[OK] 已写入 Cursor 项目配置: $CURSOR_MCP"
 echo ""
 echo "Hermes:"
 echo "  hermes mcp add vidau-market --command node --args $MCP_INDEX --env VIDAU_MARKET_ROOT=$ROOT"

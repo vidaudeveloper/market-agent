@@ -26,14 +26,28 @@ git clone https://github.com/vidaudeveloper/market-agent.git
 cd market-agent
 
 Install:
-- Windows: run setup.bat
-- Mac/Linux: bash setup.sh
+- Windows: run install-all.bat (or setup.bat step by step)
+- Mac/Linux: bash install-all.sh (or bash setup.sh)
 - Or: npm install && npx playwright install chromium
 
 Register Hermes slash command /vidau-market-agent (after clone):
-- Windows: install-hermes-skill.bat
+- Windows: install-hermes-skill.bat (included in install-all.bat)
 - Mac/Linux: bash scripts/install-hermes-skill.sh
 - See: https://github.com/vidaudeveloper/market-agent/blob/main/HERMES.md
+
+Install chuhaijiang open-platform MCP + SkillHub skill (same as my previous manual flow):
+- node scripts/install-chuhaijiang-skillhub.js
+- node scripts/install-chuhaijiang-open-mcp.js
+- Read the installed skill's references/setup.md
+- Ask me: "Do you have a chuhaijiang API Key (sk_live_...)?"
+  If yes: run install-chuhaijiang-open-mcp.js --api-key <key>
+  If no: guide me to https://developer.chuhaijiang.com to create one, then write the key
+- Hermes: /reload-mcp
+- Verify by calling chuhaijiang MCP account_info (tool name may be prefixed, e.g. mcp__chuhaijiang__account_info)
+
+Two chuhaijiang systems (explain briefly after install):
+- vidau-market MCP (repo): Playwright pipeline, feishu export, auth_chuhaijiang_login
+- chuhaijiang HTTP MCP (open platform): search/get_detail API via X-API-Key
 
 Requirements: Node.js 18+
 
@@ -99,6 +113,7 @@ If the task needs my product links, GMV targets, Feishu OAuth, or chuhaijiang lo
 | 3 | 检查 Node、飞书连接状态 |
 | 4 | **不要**索要 `AI_API_KEY`（除非要用 `ai-analyze.js`） |
 | 5 | 需飞书时引导用户按 **FEISHU-APP-SETUP.md** 填 `.env`，再 `feishu-connect.bat` |
+| 5b | SkillHub 装出海匠 skill + 开放平台 MCP + 引导填 `sk_live_` API Key + 验证 `account_info` |
 | 6 | 可选：导出测试稿到飞书验证 |
 | 7 | 运行 `install-hermes-skill.bat` / `install-hermes-skill.sh`，`/reload-skills` 后出现 `/vidau-market-agent` |
 | 8 | 浏览器打开 GitHub 仓库；登录时可问是否 star |

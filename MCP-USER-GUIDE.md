@@ -2,7 +2,23 @@
 
 > 一次授权，全程对话。无需记命令行，无需手动登录出海匠后台抄 Cookie。
 
-适用于 **Cursor**、**Hermes Agent**、Claude Desktop 等支持 MCP stdio 的客户端。
+适用于 **Cursor**、**Hermes Agent**、Claude Desktop 等支持 MCP 的客户端。
+
+---
+
+## 0. 两套 MCP（先分清）
+
+本仓库涉及**两个独立**的 MCP 服务，一键安装 `install-all.bat` / `install-all.sh` 会同时配置：
+
+| MCP 名称 | 类型 | 作用 | 安装方式 |
+|----------|------|------|----------|
+| **vidau-market** | stdio（本仓库 `mcp-server/`） | Playwright 抓取、飞书导出、`chuhaijiang_pipeline` | `install-mcp.bat` |
+| **chuhaijiang** | HTTP 开放平台 | `search`、`get_detail`、`account_info` 等实时 API | `node scripts/install-chuhaijiang-open-mcp.js` + `sk_live_` Key |
+
+另有 **SkillHub 官方 chuhaijiang skill**（`node scripts/install-chuhaijiang-skillhub.js`），内含 `references/setup.md` 引导配 Key 与验证。
+
+- **实时 API 查询** → 用 `chuhaijiang` HTTP MCP（需 API Key）
+- **全案 pipeline、截图、飞书导出** → 用 `vidau-market` MCP（需浏览器登录出海匠时走 `auth_chuhaijiang_login`）
 
 ---
 
@@ -11,8 +27,22 @@
 ```bash
 git clone https://github.com/vidaudeveloper/market-agent.git
 cd market-agent
+```
+
+**推荐一键安装：**
+
+| 系统 | 命令 |
+|------|------|
+| Windows | 双击 `install-all.bat` |
+| Mac/Linux | `bash install-all.sh` |
+
+或分步：
+
+```bash
 npm install
 npm run setup          # 安装 Playwright Chromium
+node scripts/install-chuhaijiang-skillhub.js
+node scripts/install-chuhaijiang-open-mcp.js --api-key sk_live_xxx   # 向 developer.chuhaijiang.com 申请
 ```
 
 ### 写入 MCP 配置

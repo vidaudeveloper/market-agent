@@ -2,7 +2,7 @@
 chcp 65001 >nul
 setlocal EnableDelayedExpansion
 
-REM Vidau Market MCP — 写入 Cursor 项目级配置
+REM Vidau Market MCP — 合并写入 Cursor 项目配置（不覆盖已有 chuhaijiang 等）
 set "ROOT=%~dp0"
 if "%ROOT:~-1%"=="\" set "ROOT=%ROOT:~0,-1%"
 
@@ -15,34 +15,19 @@ if not exist "%MCP_INDEX%" (
   exit /b 1
 )
 
-if not exist "%CURSOR_DIR%" mkdir "%CURSOR_DIR%"
-
-REM 将反斜杠转为正斜杠（JSON 兼容）
 set "ROOT_FWD=%ROOT:\=/%"
 set "MCP_FWD=%MCP_INDEX:\=/%"
 
-> "%CURSOR_MCP%" (
-  echo {
-  echo   "mcpServers": {
-  echo     "vidau-market": {
-  echo       "command": "node",
-  echo       "args": ["%MCP_FWD%"],
-  echo       "env": {
-  echo         "VIDAU_MARKET_ROOT": "%ROOT_FWD%"
-  echo       }
-  echo     }
-  echo   }
-  echo }
+node -e "const {mergeMcpJson}=require('./scripts/merge-mcp-json'); mergeMcpJson('%CURSOR_MCP:\=\\%', 'vidau-market', { command: 'node', args: ['%MCP_FWD%'], env: { VIDAU_MARKET_ROOT: '%ROOT_FWD%' } }); console.log('OK');"
+
+if errorlevel 1 (
+  echo [错误] 写入 MCP 配置失败
+  exit /b 1
 )
 
 echo.
-echo [OK] 已写入 Cursor 项目配置:
+echo [OK] 已合并 vidau-market 到 Cursor 配置:
 echo   %CURSOR_MCP%
-echo.
-echo 下一步:
-echo   1. 在 Cursor 中打开本仓库文件夹
-echo   2. Settings - MCP 确认 vidau-market 已启用（或重启 Cursor）
-echo   3. 对话测试: 先调用 auth_status，再查 beauty 竞品
 echo.
 echo Hermes 用户请执行:
 echo   hermes mcp add vidau-market --command node --args "%MCP_FWD%" --env VIDAU_MARKET_ROOT=%ROOT_FWD%
