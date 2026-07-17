@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "id": "example-water-bottle-us",
+    "name": "Example Water Bottle US",
+    "brand_name": "Example",
+    "product_name": "Insulated Water Bottle",
+    "hero_sku": "32oz Bottle",
+    "category": "Home Supplies",
+    "market": "US",
+    "country_code": "us",
+    "currency": "USD",
+    "target_audience": [
+      "18-35 岁健身与户外人群"
+    ],
+    "objectives": [
+      "验证 TikTok Shop 竞品机会",
+      "制定 90 天增长方案"
+    ],
+    "channels": [
+      "TikTok Shop"
+    ],
+    "budget": {
+      "amount": 30000,
+      "period": "monthly",
+      "currency": "USD"
+    },
+    "timeline": {
+      "start_date": "2026-08-01",
+      "end_date": "2026-10-29",
+      "horizon_days": 90
+    }
+  },
+  "inputs": {
+    "urls": [
+      {
+        "type": "website",
+        "url": "https://example.com",
+        "label": "品牌官网"
+      }
+    ],
+    "user_materials": []
+  },
+  "entities": {
+    "products": [
+      {
+        "id": "product-demo-1",
+        "name": "Competitor Bottle A",
+        "country": "us"
+      }
+    ],
+    "sellers": [
+      {
+        "id": "seller-demo-1",
+        "name": "Competitor Store A"
+      }
+    ],
+    "competitors": [
+      {
+        "id": "competitor-demo-1",
+        "name": "Competitor A",
+        "product_ref": "product-demo-1",
+        "seller_ref": "seller-demo-1"
+      },
+      {
+        "id": "competitor-demo-2",
+        "name": "Competitor B"
+      }
+    ],
+    "creators": [],
+    "videos": []
+  },
+  "evidence": [
+    {
+      "id": "ev-chj-product-demo-1",
+      "type": "mcp",
+      "source_name": "chuhaijiang get_detail(products)",
+      "source_url": "",
+      "retrieved_at": "2026-07-17T08:00:00.000Z",
+      "status": "verified",
+      "entity_refs": [
+        "product-demo-1"
+      ],
+      "fields": [
+        "sales",
+        "gmv",
+        "rating"
+      ],
+      "note": "示例数据，不可用于真实报告"
+    },
+    {
+      "id": "ev-chj-seller-demo-1",
+      "type": "mcp",
+      "source_name": "chuhaijiang get_detail(sellers)",
+      "source_url": "",
+      "retrieved_at": "2026-07-17T08:01:00.000Z",
+      "status": "verified",
+      "entity_refs": [
+        "seller-demo-1"
+      ],
+      "fields": [
+        "total_sales",
+        "channel"
+      ],
+      "note": "示例数据，不可用于真实报告"
+    },
+    {
+      "id": "ev-user-target",
+      "type": "user",
+      "source_name": "用户项目目标",
+      "source_url": "",
+      "retrieved_at": "2026-07-17T08:02:00.000Z",
+      "status": "verified",
+      "entity_refs": [],
+      "fields": [
+        "budget",
+        "timeline"
+      ],
+      "note": ""
+    }
+  ],
+  "facts": [
+    {
+      "id": "fact-product-sales-demo",
+      "topic": "sales",
+      "metric": "sold_30d",
+      "value": 1000,
+      "unit": "units",
+      "period": "30d",
+      "entity_ref": "product-demo-1",
+      "evidence_ids": [
+        "ev-chj-product-demo-1"
+      ],
+      "status": "verified",
+      "note": "示例值"
+    },
+    {
+      "id": "fact-seller-gmv-demo",
+      "topic": "gmv",
+      "metric": "gmv_30d",
+      "value": 25000,
+      "unit": "USD",
+      "period": "30d",
+      "entity_ref": "seller-demo-1",
+      "evidence_ids": [
+        "ev-chj-seller-demo-1"
+      ],
+      "status": "verified",
+      "note": "示例值"
+    },
+    {
+      "id": "fact-channel-demo",
+      "topic": "channel_mix",
+      "metric": "creator_video_share",
+      "value": 0.65,
+      "unit": "ratio",
+      "period": "30d",
+      "entity_ref": "seller-demo-1",
+      "evidence_ids": [
+        "ev-chj-seller-demo-1"
+      ],
+      "status": "verified",
+      "note": "示例值"
+    }
+  ],
+  "screenshots": [
+    {
+      "id": "shot-seller-demo-1",
+      "path": "output/screenshots/example-seller-demo-1.png",
+      "page_url": "https://www.chuhaijiang.com/",
+      "captured_at": "2026-07-17T08:03:00.000Z",
+      "entity_ref": "seller-demo-1",
+      "evidence_id": "ev-chj-seller-demo-1",
+      "caption": "竞品店铺详情页（示例）"
+    }
+  ],
+  "assumptions": [],
+  "gaps": [
+    {
+      "id": "gap-creator-data",
+      "field": "entities.creators",
+      "reason": "尚未调用 get_related(products, creators)",
+      "blocking_skills": []
+    }
+  ],
+  "workflow": {
+    "current_stage": "data_collection",
+    "completed_stages": [
+      "intake"
+    ],
+    "last_gate": {
+      "skill": "market-competitors",
+      "passed": true,
+      "checked_at": "2026-07-17T08:19:39.361Z"
+    }
+  },
+  "generated_at": "2026-07-17T08:00:00.000Z",
+  "updated_at": "2026-07-17T08:19:39.361Z"
+}

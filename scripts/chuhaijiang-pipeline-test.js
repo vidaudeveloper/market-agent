@@ -18,8 +18,15 @@ const {
   buildTiktokCreatorUrl,
   resolveChuhaijiangCreatorLink
 } = require('./chuhaijiang-image-utils');
+const { mapMetaToPatch } = require('./chuhaijiang-facts-mapper');
 
 const ROOT = path.join(__dirname, '..');
+
+function toRepoPosix(filePath) {
+  if (!filePath) return '';
+  const absolute = path.isAbsolute(filePath) ? filePath : path.join(ROOT, filePath);
+  return path.relative(ROOT, absolute).replace(/\\/g, '/');
+}
 const AUTH_JSON = path.join(ROOT, 'auth.json');
 const OUTPUT = path.join(ROOT, 'output');
 const ASSETS = path.join(OUTPUT, 'chuhaijiang-assets');
@@ -654,8 +661,43 @@ async function runPipeline(options = {}) {
       meta.feishuUrl = result.url;
     }
 
+    // 落盘前把绝对路径规范为仓库相对 POSIX 路径，便于团队分发与跨平台
+    const relativizeEntity = (list, key) =>
+      (list || []).map(item => (item[key] ? { ...item, [key]: toRepoPosix(item[key]) } : item));
+    const metaForDisk = {
+      ...meta,
+      reportPath: toRepoPosix(meta.reportPath),
+      screenshots: Object.fromEntries(
+        Object.entries(meta.screenshots || {}).map(([k, v]) => [k, toRepoPosix(v)])
+      ),
+      shops: relativizeEntity(meta.shops, 'avatarLocal'),
+      creators: relativizeEntity(meta.creators, 'avatarLocal'),
+      products: relativizeEntity(meta.products, 'imageLocal')
+    };
+
     const metaPath = path.join(OUTPUT, `出海匠链路测试-${DATE}.json`);
-    fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf-8');
+    fs.writeFileSync(metaPath, JSON.stringify(metaForDisk, null, 2), 'utf-8');
+
+    // 自动生成 Project Facts 补丁；给了 --facts 则直接合并到事实包
+    try {
+      const patch = mapMetaToPatch(metaForDisk);
+      const patchPath = path.join(OUTPUT, `facts-patch-chj-${DATE}.json`);
+      fs.writeFileSync(patchPath, JSON.stringify(patch, null, 2), 'utf-8');
+      meta.factsPatchPath = toRepoPosix(patchPath);
+      console.log('   Project Facts 补丁:', meta.factsPatchPath);
+      if (options.factsFile) {
+        const { execFileSync } = require('child_process');
+        execFileSync(
+          process.execPath,
+          [path.join(ROOT, 'scripts', 'project-facts.js'), 'merge', '--file', options.factsFile, '--patch', patchPath],
+          { stdio: 'inherit' }
+        );
+      } else {
+        console.log('   合并命令: node scripts/project-facts.js merge --file <facts> --patch', meta.factsPatchPath);
+      }
+    } catch (e) {
+      console.warn('   ⚠ 生成 Project Facts 补丁失败:', e.message);
+    }
 
     try {
       const authDir = path.dirname(STORAGE);
@@ -675,10 +717,13 @@ async function runPipeline(options = {}) {
 const args = process.argv.slice(2);
 const keywordIdx = args.indexOf('--keyword');
 const keyword = keywordIdx >= 0 ? args[keywordIdx + 1] : 'beauty';
+const factsIdx = args.indexOf('--facts');
+const factsFile = factsIdx >= 0 ? args[factsIdx + 1] : undefined;
 
 runPipeline({
   keyword,
-  exportFeishu: args.includes('--export-feishu')
+  exportFeishu: args.includes('--export-feishu'),
+  factsFile
 }).catch(err => {
   console.error('❌ 链路测试失败:', err.message);
   process.exit(1);

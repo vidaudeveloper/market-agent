@@ -14,6 +14,10 @@ description: "TTS全案代运营报价逻辑。触发词：代运营报价、运
 - 用户问「代运营多少钱」「按 GMV 目标怎么报价」
 - 与 `tts-partnership-proposal`、`tts-operation-model`、`tts-full-case` **联合执行**
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill tts-pricing-logic`。GMV/销量目标、ASP、周期和预算须明确区分用户确认值、平台实测值与估算值；门禁缺项不得用默认数字伪装成客户报价。
+
 ## 推理链（必须按顺序）
 
 ```

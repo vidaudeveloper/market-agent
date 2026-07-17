@@ -13,6 +13,14 @@ const { z } = require('zod');
 const { getRoot, toPosix } = require('./lib/root');
 const { getAuthStatus } = require('./lib/auth');
 const { runNodeScript, extractFeishuUrl, extractReportPath } = require('./lib/run-script');
+const {
+  createFactsFromIntake,
+  mergeFacts,
+  readJson,
+  runGate,
+  validateFacts,
+  writeJson
+} = require('../scripts/project-facts-lib');
 
 function textResult(data, { isError = false } = {}) {
   const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
@@ -70,6 +78,31 @@ function readReportFile(root, reportPath, maxChars = 12000) {
   };
 }
 
+function resolveOutputJson(root, filePath) {
+  const resolved = path.isAbsolute(filePath)
+    ? filePath
+    : path.join(root, filePath.replace(/^[/\\]/, ''));
+  const relative = toPosix(path.relative(root, resolved));
+  if (!relative.startsWith('output/') || !relative.endsWith('.json')) {
+    throw new Error('Project Facts 仅允许读写 output/*.json');
+  }
+  return { resolved, relative };
+}
+
+function resolveInputJson(root, filePath) {
+  const resolved = path.isAbsolute(filePath)
+    ? filePath
+    : path.join(root, filePath.replace(/^[/\\]/, ''));
+  const relative = toPosix(path.relative(root, resolved));
+  if (
+    !relative.endsWith('.json') ||
+    (!relative.startsWith('output/') && !relative.startsWith('templates/'))
+  ) {
+    throw new Error('intake 仅允许读取 output/*.json 或 templates/*.json');
+  }
+  return resolved;
+}
+
 function findLatestMeta(root) {
   const outputDir = path.join(root, 'output');
   if (!fs.existsSync(outputDir)) return null;
@@ -95,6 +128,109 @@ server.tool(
   '检查飞书/出海匠授权与环境是否就绪。执行任何数据采集或飞书导出前应先调用此工具。',
   {},
   async () => textResult(getAuthStatus())
+);
+
+server.tool(
+  'project_facts_init',
+  '创建项目唯一事实数据包。营销分析、内容、提案与 TTS/Amazon 全案在采集数据前调用。',
+  {
+    output_file: z.string().describe('必须位于 output/，如 output/acme-project-facts.json'),
+    intake_file: z.string().optional().describe('可选 intake JSON 路径'),
+    project_id: z.string().optional(),
+    project_name: z.string().optional(),
+    brand_name: z.string().optional(),
+    product_name: z.string().optional()
+  },
+  async ({ output_file, intake_file, project_id, project_name, brand_name, product_name }) => {
+    const root = getRoot();
+    const output = resolveOutputJson(root, output_file);
+    const intake = intake_file ? readJson(resolveInputJson(root, intake_file)) : {};
+    const facts = createFactsFromIntake(intake, {
+      id: project_id,
+      name: project_name,
+      brand_name,
+      product_name
+    });
+    const validation = validateFacts(facts);
+    if (!validation.ok) return textResult({ ok: false, errors: validation.errors }, { isError: true });
+    writeJson(output.resolved, validation.data);
+    return textResult({ ok: true, project_facts_path: output.relative, facts: validation.data });
+  }
+);
+
+server.tool(
+  'project_facts_merge',
+  '把出海匠/API/网页/用户资料的结构化补丁合并到事实包。带 id 的实体、evidence、facts 按 id 更新；合并失败不覆盖原文件。',
+  {
+    file: z.string().describe('output/ 下的 Project Facts JSON'),
+    patch_json: z.string().describe('JSON 字符串；可只包含要更新的 project/entities/evidence/facts/screenshots/gaps 等字段')
+  },
+  async ({ file, patch_json }) => {
+    const root = getRoot();
+    const target = resolveOutputJson(root, file);
+    let patch;
+    try {
+      patch = JSON.parse(patch_json);
+    } catch (error) {
+      return textResult({ ok: false, message: `patch_json 解析失败: ${error.message}` }, { isError: true });
+    }
+    const merged = mergeFacts(readJson(target.resolved), patch);
+    const validation = validateFacts(merged);
+    if (!validation.ok) return textResult({ ok: false, errors: validation.errors }, { isError: true });
+    writeJson(target.resolved, validation.data);
+    return textResult({
+      ok: true,
+      project_facts_path: target.relative,
+      counts: {
+        evidence: validation.data.evidence.length,
+        facts: validation.data.facts.length,
+        screenshots: validation.data.screenshots.length
+      }
+    });
+  }
+);
+
+server.tool(
+  'project_facts_validate',
+  '校验 Project Facts 结构、重复 ID、证据引用和 verified fact 的可追溯性。',
+  {
+    file: z.string().describe('output/ 下的 Project Facts JSON')
+  },
+  async ({ file }) => {
+    const root = getRoot();
+    const target = resolveOutputJson(root, file);
+    const validation = validateFacts(readJson(target.resolved));
+    return textResult(
+      { ok: validation.ok, project_facts_path: target.relative, errors: validation.errors },
+      { isError: !validation.ok }
+    );
+  }
+);
+
+server.tool(
+  'project_facts_gate',
+  '在进入目标 skill 最终分析前执行质量门禁。BLOCKER 未清零时必须先补数据，不能写最终稿。',
+  {
+    file: z.string().describe('output/ 下的 Project Facts JSON'),
+    skill: z.string().describe('目标 skill，如 market-seo、market-competitors、tts-full-case')
+  },
+  async ({ file, skill }) => {
+    const root = getRoot();
+    const target = resolveOutputJson(root, file);
+    const facts = readJson(target.resolved);
+    const validation = validateFacts(facts);
+    if (!validation.ok) return textResult({ ok: false, errors: validation.errors }, { isError: true });
+    const gates = readJson(path.join(root, 'templates', 'config', 'fact-gates.json'));
+    const gate = runGate(validation.data, skill, gates);
+    validation.data.workflow.last_gate = {
+      skill,
+      passed: gate.passed,
+      checked_at: gate.checked_at
+    };
+    validation.data.updated_at = gate.checked_at;
+    writeJson(target.resolved, validation.data);
+    return textResult({ ok: gate.passed, project_facts_path: target.relative, ...gate }, { isError: !gate.passed });
+  }
 );
 
 server.tool(
@@ -142,9 +278,13 @@ server.tool(
   '出海匠全链路：达人筛选 + 竞品店铺 + 商品 + 截图 + Markdown 报告。可选同时导出飞书。耗时 1–3 分钟。',
   {
     keyword: z.string().optional().describe('搜索关键词，默认 beauty'),
-    export_feishu: z.boolean().optional().describe('是否同时导出飞书文档，默认 false')
+    export_feishu: z.boolean().optional().describe('是否同时导出飞书文档，默认 false'),
+    project_facts_file: z
+      .string()
+      .optional()
+      .describe('可选 output/ 下的 Project Facts JSON；提供则自动把结果合并进事实包')
   },
-  async ({ keyword = 'beauty', export_feishu = false }) => {
+  async ({ keyword = 'beauty', export_feishu = false, project_facts_file }) => {
     const root = getRoot();
     const status = getAuthStatus();
     if (!status.ready_for_pipeline) {
@@ -161,6 +301,10 @@ server.tool(
 
     const args = ['--keyword', keyword];
     if (export_feishu) args.push('--export-feishu');
+    if (project_facts_file) {
+      const factsTarget = resolveOutputJson(root, project_facts_file);
+      args.push('--facts', factsTarget.resolved);
+    }
 
     const result = await runNodeScript('scripts/chuhaijiang-pipeline-test.js', args, {
       timeout: 300000
@@ -173,10 +317,16 @@ server.tool(
       );
     }
 
+    // pipeline 现在把 meta 内路径写成仓库相对 POSIX；兼容旧的绝对路径
+    const toRelIfNeeded = p => {
+      if (!p) return null;
+      return path.isAbsolute(p) ? toPosix(path.relative(root, p)) : toPosix(p);
+    };
+
     const meta = findLatestMeta(root);
     const feishuUrl = meta?.feishuUrl || extractFeishuUrl(result.stdout);
     const reportPath = meta?.reportPath
-      ? toPosix(path.relative(root, meta.reportPath))
+      ? toRelIfNeeded(meta.reportPath)
       : extractReportPath(result.stdout, root)
         ? toPosix(path.relative(root, extractReportPath(result.stdout, root)))
         : null;
@@ -186,6 +336,8 @@ server.tool(
       keyword,
       report_path: reportPath,
       feishu_url: feishuUrl || undefined,
+      project_facts_file: project_facts_file || undefined,
+      facts_patch_path: meta?.factsPatchPath || undefined,
       summary: meta
         ? {
             creators: meta.creators?.length ?? 0,
@@ -194,7 +346,7 @@ server.tool(
           }
         : undefined,
       screenshots: meta?.screenshots
-        ? Object.values(meta.screenshots).map(p => toPosix(path.relative(root, p)))
+        ? Object.values(meta.screenshots).map(toRelIfNeeded)
         : undefined
     });
   }

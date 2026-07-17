@@ -10,13 +10,16 @@
 ```mermaid
 flowchart TD
   A[用户输入客户信息/需求] --> B[Intake 结构化]
-  B --> C[轨道A: Agent 自分析]
-  B --> D[轨道B: 出海匠数据层]
+    B --> PF[创建 Project Facts]
+    PF --> C[轨道A: Agent 自分析]
+    PF --> D[轨道B: 出海匠数据层]
   D --> D1[pipeline 结构化数据]
   D --> D2[Agent 对话 策略/方案]
-  C --> E[双轨合并结论]
-  D1 --> E
-  D2 --> E
+    C --> V[更新 evidence/facts]
+    D1 --> V
+    D2 --> V
+    V --> Q[validate + skill gate]
+    Q --> E[双轨合并结论]
   E --> F{识别到达人列表需求?}
   F -->|是| G[整理前置条件 → 出海匠对话查达人]
   F -->|否| H[写报告 output/*.md]
@@ -58,6 +61,18 @@ flowchart TD
 
 整理完成后写入：`output/{project}-creator-prompt.txt`（可由 `templates/prompt-creator-list.template.txt` 渲染）。
 
+### 2.3 建立唯一事实数据包
+
+Intake 完成后立即创建：
+
+```bash
+node scripts/project-facts.js init \
+  --out output/{project}-project-facts.json \
+  --intake output/{project}-intake.json
+```
+
+后续 A/B 轨都只更新这一个文件；字段与证据等级见 `skills/PROJECT-FACTS.md`。禁止把 API Key、Cookie、Secret 写入其中。
+
 ---
 
 ## 三、阶段 1 — 双轨分析
@@ -66,7 +81,7 @@ flowchart TD
 
 ```
 读 DELIVERY-STANDARD + 对应 skill
-→ WebFetch / 用户上传资料
+→ WebFetch / 用户上传资料写入 Project Facts evidence
 → 按 rubric 写判断、策略、预算逻辑、风险
 → 输出「Agent 分析摘要」区块（可单独 md 或并入总报告）
 ```
@@ -79,6 +94,14 @@ flowchart TD
 |--------|------|------|
 | **B1 结构化数据** | `chuhaijiang-pipeline-test.js` | 达人 GMV 表、竞品店铺、爆款商品、截图 |
 | **B2 Agent 对话** | `chuhaijiang-agent-ask.js` | 全案策略、预算分配、**达人 BD 名单** |
+
+B1/B2 返回后须结构化写入 Project Facts：
+
+- 商品/店铺/达人/视频 → `entities`
+- MCP、网页、用户资料、对话记录 → `evidence`
+- 销量、GMV、渠道、互动率等原子指标 → `facts`
+- Playwright 页面图 → `screenshots`
+- 未返回字段、额度限制 → `gaps`
 
 **B2 对话流程：**
 
@@ -98,6 +121,15 @@ node scripts/chuhaijiang-agent-ask.js --file output/{project}-creator-prompt.txt
 ---
 
 ## 四、阶段 2 — 双轨合并（输出结论）
+
+合并前执行：
+
+```bash
+node scripts/project-facts.js validate --file output/{project}-project-facts.json
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill <目标-skill>
+```
+
+`BLOCKER` 未清零时不得进入最终报告；`WARNING` 必须写入「数据缺口与假设」。
 
 报告须含独立章节（建议顺序）：
 
@@ -225,6 +257,9 @@ node scripts/chuhaijiang-agent-ask.js --file output/{project}-creator-prompt.txt
 ## 九、导出前自检（新增项）
 
 - [ ] Intake 已结构化（tts + 若需达人则 creator-agent）
+- [ ] Project Facts 已建立，且不含凭证
+- [ ] `project-facts validate` 通过
+- [ ] 目标 skill gate 通过；WARNING 已披露
 - [ ] 轨道 A 与 B 均已执行或说明跳过原因
 - [ ] 有「综合结论」章，非双份粘贴
 - [ ] 达人需求已走对话且前置条件齐全

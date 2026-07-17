@@ -10,6 +10,10 @@ description: "客户提案生成。触发词：生成提案、客户提案、商
 - "为 XX 客户准备一份营销服务方案"
 - "制作一份服务报价提案"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-proposal`。提案只汇总同一 Project Facts 中的客户目标、诊断、竞品与证据。报价、KPI、ROI 必须区分用户确认值、平台实测值与公式估算值。
+
 ## 搜集输入
 在生成前提问：客户名称与公司、行业模式、当前营销状况、痛点、目标、预算范围、决策时间线
 

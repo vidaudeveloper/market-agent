@@ -140,6 +140,10 @@ Agent 流程：
 | `auth_feishu_connect` | 飞书 OAuth |
 | `auth_chuhaijiang_login` | 出海匠浏览器登录 |
 | `chuhaijiang_pipeline` | 达人+店铺+商品+截图+报告 |
+| `project_facts_init` | 创建项目唯一事实数据包 |
+| `project_facts_merge` | 合并 API/网页/用户资料的结构化证据与事实 |
+| `project_facts_validate` | 校验结构与证据引用 |
+| `project_facts_gate` | 目标 skill 最终分析前质量门禁 |
 | `feishu_export` | Markdown → 飞书 |
 | `list_reports` | 列出 output/ 报告 |
 | `read_report` | 读取报告内容 |

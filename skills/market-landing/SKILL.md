@@ -10,6 +10,10 @@ description: "落地页CRO分析。触发词：落地页优化、转化率优化
 - "优化我的落地页"
 - "帮我看下这个页面有什么问题"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-landing`。无实验或分析平台 evidence 时，输出为启发式 CRO 诊断和 A/B 假设，不把行业基准写成该页面实测转化率。
+
 ## 页面类型识别
 
 | 类型 | 主目标 | 良好CR | 优秀CR |

@@ -92,6 +92,24 @@ D:\AAA-agent\AI营销全案策划师
 
 报告中的**具体数字、KPI、评分**须在数据块下方标注来源，末尾附「数据来源汇总」。规范：**`skills/DATA-SOURCE.md`**
 
+### Project Facts：各模块共用同一份事实
+
+分析、内容、提案与 TTS/Amazon 全案统一使用：
+
+```text
+output/{project}-project-facts.json
+```
+
+它保存项目上下文、商品/店铺/竞品/达人/视频、证据、原子事实、截图、假设和数据缺口。Agent 在写最终稿前执行结构校验和目标 skill 门禁，避免不同模块各自编造或产生冲突数字。
+
+```bash
+node scripts/project-facts.js init --out output/demo-project-facts.json --brand "品牌" --product "产品"
+node scripts/project-facts.js validate --file output/demo-project-facts.json
+node scripts/project-facts.js gate --file output/demo-project-facts.json --skill market-audit
+```
+
+完整规范：[`skills/PROJECT-FACTS.md`](skills/PROJECT-FACTS.md)；样例：[`templates/project-facts.example.json`](templates/project-facts.example.json)。
+
 ---
 
 ## 🧠 能力地图

@@ -10,6 +10,10 @@ description: "邮件序列生成。触发词：生成邮件序列、邮件营销
 - "为 XX 产品写邮件营销序列"
 - "设计一套培育邮件的 drip campaign"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-emails`。邮件中的产品事实、受众、Offer 与目标统一取自 Project Facts；无历史邮件平台数据时，发送频率与转化目标标为建议/假设。
+
 ## 序列类型选择
 
 | 类型 | 适用场景 | 邮件数 | 目标 |

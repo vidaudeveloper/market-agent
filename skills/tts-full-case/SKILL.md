@@ -16,6 +16,7 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 ## 必读
 
 - `skills/DELIVERY-STANDARD.md`
+- `skills/PROJECT-FACTS.md`
 - `skills/WORKFLOW-CLIENT-ANALYSIS.md`
 - `skills/tts-growth-plan/SKILL.md`
 - `skills/tts-partnership-proposal/SKILL.md`
@@ -38,6 +39,12 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
   │    → 达人/店铺/商品表 + 截图证据
   └─ 轨道 B2（按需）：chuhaijiang-agent-ask.js
        → 策略方案；达人需求时 --session 续聊名单
+
+阶段 1.5 — 事实包门禁（必做）
+  ├─ 两轨结果写入 output/{project}-project-facts.json
+  ├─ node scripts/project-facts.js validate --file <facts>
+  └─ node scripts/project-facts.js gate --file <facts> --skill tts-full-case
+       → BLOCKER 未清零不得进入主报告
 
 阶段 2 — 主报告（必做）
   └─ tts-growth-plan → 含「Agent 分析」「出海匠结论」「综合结论」三章
@@ -80,5 +87,6 @@ description: "TTS全案编排。触发词：TTS全案、TikTok代运营全套、
 ## 禁止
 
 - 跳过 intake 直接写数字
+- 跳过 Project Facts validate/gate 直接写最终稿
 - 只出一份笼统「营销方案」不区分 skill
 - WebFetch 读飞书案例链接（用 feishu-read-doc）

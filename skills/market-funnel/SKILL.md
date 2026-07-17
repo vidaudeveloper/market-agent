@@ -10,6 +10,10 @@ description: "转化漏斗分析。触发词：漏斗分析、转化分析、转
 - "帮我看下转化路径有哪些问题"
 - "哪里流失用户最多"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-funnel`。没有 GA4、CRM 或漏斗事件 evidence 时，只能分析页面路径与摩擦点；不得声称知道真实流失最多的环节或真实转化率。
+
 ## 第一步：识别漏斗类型
 
 | 类型 | 典型步骤 | 核心指标 |

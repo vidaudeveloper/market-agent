@@ -12,10 +12,11 @@ description: "TikTok市场分析+选品+打品+执行计划。触发词：TikTok
 
 ## 必读
 
-1. `skills/DELIVERY-STANDARD.md`
-2. `templates/tts-growth-plan.template.md`
-3. `templates/intake-tts.json`
-4. 结论块参考：`templates/reference/紫晶海外社媒调研-2026.md`（前 40 行）
+1. `skills/PROJECT-FACTS.md`
+2. `skills/DELIVERY-STANDARD.md`
+3. `templates/tts-growth-plan.template.md`
+4. `templates/intake-tts.json`
+5. 结论块参考：`templates/reference/紫晶海外社媒调研-2026.md`（前 40 行）
 
 ## Intake 八项（缺一必问）
 
@@ -32,17 +33,19 @@ description: "TikTok市场分析+选品+打品+执行计划。触发词：TikTok
 
 ```
 1. 填写 intake-tts.json 或对话收集
-2. **默认** 出海匠 pipeline（见 delivery-defaults.json）：
+2. 创建项目 Project Facts；所有数据与截图写入同一事实包
+3. **默认** 出海匠 pipeline（见 delivery-defaults.json）：
    node scripts/chuhaijiang-pipeline-test.js --keyword "{品牌或品类}"
    → 将达人/店铺/商品表 + 截图并入第三章「竞品调研」
-3. WebFetch Amazon 产品页
-4. 写 ❗【核心结论】3–6 条（见下方排版规范）
-5. 按模板填八章；选品表必须含「暂缓」项及理由
-6. 目标拆解：年 GMV → 年订单 → 月/日
-7. 执行计划：从 launch_month 起，周/月节点
-8. chart ≥2
-9. 报告落盘 output/{BRAND}-TTS增长全案-{DATE}.md
-10. **默认** feishu-export --charts（用户未说「不要飞书」则自动执行）
+4. WebFetch Amazon 产品页并登记 evidence
+5. validate + gate --skill tts-growth-plan；BLOCKER 未清零停止
+6. 写 ❗【核心结论】3–6 条（见下方排版规范）
+7. 按模板填八章；选品表必须含「暂缓」项及理由
+8. 目标拆解：年 GMV → 年订单 → 月/日
+9. 执行计划：从 launch_month 起，周/月节点
+10. chart ≥2
+11. 报告落盘 output/{BRAND}-TTS增长全案-{DATE}.md
+12. **默认** feishu-export --charts（用户未说「不要飞书」则自动执行）
 ```
 
 > 编排顺序固定为：**出海匠数据 → 写报告 → 飞书导出**。有 MCP 时优先 `chuhaijiang_pipeline` + `feishu_export`。

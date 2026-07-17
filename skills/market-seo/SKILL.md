@@ -10,6 +10,16 @@ description: "SEO审计。触发词：SEO分析、搜索优化、搜索引擎排
 - "帮我做 SEO 审计"
 - "这个网站的搜索优化怎么样"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md`，登记官网页面、robots、sitemap、Schema 等 evidence，再执行：
+
+```bash
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill market-seo
+```
+
+未接 Search Console、SERP、Lighthouse 或全站爬虫时，只做公开页面快速审计；不得声称真实排名、搜索量、流量或 Core Web Vitals 已实测。
+
 ## 第一步：站内 SEO 检查
 
 ### 标题标签

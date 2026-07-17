@@ -59,6 +59,7 @@
 | `feishu-read-doc.js` | 读取飞书 docx/wiki → Markdown | `node scripts/feishu-read-doc.js --url "https://...feishu.cn/docx/..."` |
 | `feishu-auth.js` | 飞书 OAuth 授权（自动开浏览器） | `node scripts/feishu-auth.js` |
 | `feishu-export.js` | 导出 Markdown 到用户飞书 | `node scripts/feishu-export.js output/report.md "标题" --charts` |
+| `project-facts.js` | 项目事实包 init/merge/validate/gate | `node scripts/project-facts.js gate --file output/project-facts.json --skill market-seo` |
 
 ---
 

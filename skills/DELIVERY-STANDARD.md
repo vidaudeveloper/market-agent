@@ -1,6 +1,6 @@
 # 交付标准（TTS / Amazon 全案）
 
-> 所有 TikTok Shop、Amazon 代运营、合作提案类报告**必须**遵守。与 `skills/DATA-SOURCE.md` 并列执行。
+> 所有 TikTok Shop、Amazon 代运营、合作提案类报告**必须**遵守。与 `skills/PROJECT-FACTS.md`、`skills/DATA-SOURCE.md` 并列执行。
 
 ---
 
@@ -150,7 +150,7 @@
 | `export.auto_after_report` | **true** | TTS/Amazon 全案完成后自动执行，无需用户再说「导出飞书」 |
 | `export.skip_flag` | `--no-feishu` | 用户明确不要飞书时使用 |
 
-**标准流程**：`Intake` → `双轨分析` → `[达人对话]` → `output/*.md` → `feishu-export --charts`
+**标准流程**：`Intake` → `Project Facts` → `双轨分析` → `validate + gate` → `[达人对话]` → `output/*.md` → `feishu-export --charts`
 
 命令：`node scripts/feishu-export.js output/xxx.md "标题" --charts`
 
@@ -159,6 +159,9 @@
 ## 4. 导出前自检（Agent 必做）
 
 - [ ] 文档类型与 skill 匹配
+- [ ] `output/{project}-project-facts.json` 已建立且无凭证
+- [ ] `project-facts validate` 与目标 skill gate 已通过
+- [ ] 报告精确数字可从 `facts[].evidence_ids` 回溯
 - [ ] **双轨分析已完成并合并**（见 WORKFLOW-CLIENT-ANALYSIS.md）
 - [ ] 已跑出海匠 pipeline 并并入报告（TTS 类默认）
 - [ ] 达人需求已整理 intake-creator-agent 并走 agent-ask（若触发）

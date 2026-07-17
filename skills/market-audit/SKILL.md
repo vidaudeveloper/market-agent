@@ -10,6 +10,16 @@ description: "全面营销审计。触发词：营销审计、全面诊断、综
 - "分析这个网站的营销做得怎么样"
 - "全面诊断 https://xxx.com"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md`，把官网抓取记录写入项目 `evidence`，再执行：
+
+```bash
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill market-audit
+```
+
+无 GA4/GSC/CRM 证据时，本技能只做公开页面启发式审计，不声称掌握真实流量、排名、转化率或收入影响。
+
 ## 执行流程
 
 ### 第一步：发现

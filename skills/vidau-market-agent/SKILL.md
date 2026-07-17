@@ -42,12 +42,14 @@ npm install
 
 ```
 1. 读工作区根目录 AGENT.md
-2. 读 skills/DELIVERY-STANDARD.md + skills/WORKFLOW-CLIENT-ANALYSIS.md
-3. 若已配置 vidau-market MCP → 优先调 MCP tools（见 MCP-USER-GUIDE.md），勿手写 shell
-4. 按用户意图选子 skill（见 AGENT.md 路由表）
-5. 客户任务：**默认双轨**（Agent 自分析 + 出海匠 pipeline/对话）→ 合并结论
-6. 识别达人需求 → intake-creator-agent → agent-ask 续聊名单
-7. 报告写入 output/ → **默认** feishu_export / feishu-export --charts
+2. 读 skills/PROJECT-FACTS.md + DELIVERY-STANDARD.md + WORKFLOW-CLIENT-ANALYSIS.md
+3. Intake 后创建 output/{project}-project-facts.json
+4. 若已配置 vidau-market MCP → 优先调 MCP tools（见 MCP-USER-GUIDE.md），勿手写 shell
+5. 按用户意图选子 skill（见 AGENT.md 路由表）
+6. 客户任务：**默认双轨**；两轨结果统一写入 Project Facts
+7. validate + 目标 skill gate；BLOCKER 未清零不写最终稿
+8. 识别达人需求 → intake-creator-agent → agent-ask 续聊名单
+9. 报告写入 output/ → **默认** feishu_export / feishu-export --charts
 ```
 
 ### MCP 优先规则
@@ -57,6 +59,8 @@ npm install
 | 任务 | 用 MCP 工具 |
 |------|-------------|
 | 检查授权 | `auth_status` |
+| 创建/更新事实包 | `project_facts_init` / `project_facts_merge` |
+| 事实校验/门禁 | `project_facts_validate` / `project_facts_gate` |
 | 飞书连接 | `auth_feishu_connect` |
 | 出海匠登录 | `auth_chuhaijiang_login` |
 | TikTok 数据采集 | `chuhaijiang_pipeline` |

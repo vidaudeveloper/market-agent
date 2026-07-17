@@ -10,6 +10,16 @@ description: "品牌声调分析。触发词：品牌调性、品牌声音、品
 - "帮我做品牌声调分析"
 - "这个品牌适合什么样的文案风格"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md`，把官网、社媒与用户品牌材料登记为 evidence，再执行：
+
+```bash
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill market-brand
+```
+
+品牌人格和声调评分属于 Agent 评估，须与官方品牌材料和消费者实测认知区分。
+
 ## 执行流程
 
 ### 第一步：收集素材

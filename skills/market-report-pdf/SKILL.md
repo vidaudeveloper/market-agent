@@ -22,6 +22,8 @@ description: "PDF报告导出。触发词：导出PDF、生成PDF报告、打印
 ## 前置条件
 - 至少运行了一个分析技能（market-audit 等）
 - 检查 `output/` 目录下的分析文件
+- 若项目有 `output/{project}-project-facts.json`：导出前先 `project-facts validate`，并对上游 skill 跑过 gate；PDF 只固化已校验的报告，不重新生成或改写数字
+- PDF 须保留正文的数据来源标注与「数据缺口与假设」章节，不得因排版删除
 
 ## 数据收集
 汇总以下文件中的数据：

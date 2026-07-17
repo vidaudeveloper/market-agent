@@ -13,6 +13,8 @@ description: "营销报告生成。触发词：生成营销报告、营销评分
 ## 前置条件
 先运行其他分析技能（market-audit、market-seo、market-landing 等），本技能汇总所有已有数据。
 
+同时读取 `skills/PROJECT-FACTS.md` 和项目唯一的 `output/{project}-project-facts.json`。汇总报告不得从多个子报告复制互相冲突的数字；发生冲突时回到 `facts[].evidence_ids` 核对，无法解决则写入「数据缺口与假设」。
+
 检查以下文件存在：
 - `output/MARKETING-AUDIT.md`
 - `output/LANDING-CRO.md`

@@ -109,6 +109,36 @@
 
 ## 技能调度规则
 
+### 全局前置：Project Facts
+
+除纯格式转换/读取任务外，所有营销分析、内容生成、提案与 TTS/Amazon 方案先读 **`skills/PROJECT-FACTS.md`**。
+
+```text
+Intake
+→ output/{project}-project-facts.json
+→ 采集 entities/evidence/facts/screenshots
+→ project-facts validate
+→ project-facts gate --skill <目标 skill>
+→ 分析/写作
+→ 图表 + 飞书
+```
+
+命令：
+
+```bash
+node scripts/project-facts.js init --out output/{project}-project-facts.json --intake output/{project}-intake.json
+node scripts/project-facts.js validate --file output/{project}-project-facts.json
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill <skill-name>
+```
+
+执行规则：
+
+1. `BLOCKER` 未清零时停止生成最终结论，先采集数据或向用户补问。
+2. `WARNING` 可继续，但必须写入报告的「数据缺口与假设」。
+3. 不同 skill 必须消费同一份 Project Facts，不得各自创造互相冲突的客户数字。
+4. 精确数字从 `facts[]` 取值，并能回溯到 `evidence_ids`；截图只作视觉证据。
+5. 外部平台未接入时明确能力边界：无 GA4/GSC 不声称真实流量/排名，无广告账户不声称已投放，无社媒账户不声称已发布。
+
 ### 当用户说"分析网站"时
 
 按以下优先级选择技能：
@@ -152,22 +182,25 @@
 
 ```
 1. Intake：templates/intake-tts.json（+ 若需达人则 intake-creator-agent.json）
-2. 轨道 A：Agent 按对应 skill 自分析（框架、策略、估算须标注来源）
-3. 轨道 B：
+2. 创建并持续更新 output/{project}-project-facts.json
+3. 轨道 A：Agent 按对应 skill 自分析（官网/用户材料写入 evidence）
+4. 轨道 B：
    ├─ B1 chuhaijiang-pipeline-test（达人 GMV / 店铺 / 商品 / 截图）
    └─ B2 chuhaijiang-agent-ask（策略方案；识别到达人需求时再续聊要名单）
-4. 合并：报告含「Agent 分析」「出海匠结论」「综合结论与建议」三章
-5. 落盘 output/*.md → 默认 feishu-export --charts（用户说不要飞书则 --no-feishu）
+5. validate + 对目标 skill 跑 gate；BLOCKER 未清零不得写最终稿
+6. 合并：报告含「Agent 分析」「出海匠结论」「综合结论与建议」三章
+7. 落盘 output/*.md → 默认 feishu-export --charts（用户说不要飞书则 --no-feishu）
 ```
 
 ### 当用户说「TTS 全案 / 布局 TikTok / 合作方案」时
 
 ```
-1. 读 DELIVERY-STANDARD + WORKFLOW-CLIENT-ANALYSIS + tts-full-case
+1. 读 PROJECT-FACTS + DELIVERY-STANDARD + WORKFLOW-CLIENT-ANALYSIS + tts-full-case
 2. 对照 intake-tts.json 收集缺项
-3. 双轨：A 轨写增长/合作框架 + B 轨 pipeline +（按需）Agent 对话
+3. 建立 Project Facts；双轨结果统一写入 entities/evidence/facts/screenshots
 4. 若含 KOL 矩阵 / 用户要达人名单 → 整理 intake-creator-agent → agent-ask 续聊
-5. 合并结论写主报告 → 默认 feishu-export --charts
+5. validate + `gate --skill tts-full-case`
+6. 合并结论写主报告 → 默认 feishu-export --charts
 ```
 
 参考案例在 `templates/reference/`（`node scripts/feishu-read-doc.js --batch templates/feishu-reference-urls.txt` 更新）。
@@ -194,13 +227,15 @@
 ### 网页分析
 
 ```
-用户提供 URL → WebFetch 抓取页面 → 读取对应技能文件 → 按框架分析 → 输出报告
+用户提供 URL → WebFetch 抓取页面 → 写入 Project Facts evidence/facts
+→ validate + skill gate → 按框架分析 → 输出报告
 ```
 
 ### 出海匠数据查询
 
 ```
-TTS 分析 → chuhaijiang-pipeline-test（达人/店铺/商品/截图）
+TTS 分析 → 出海匠 MCP search/get_detail/get_related + pipeline 截图
+→ 写入 Project Facts entities/evidence/facts/screenshots → gate → 分析
 单点查询 → chuhaijiang-fetch.js → 检查认证 → Playwright 抓取 → 格式化输出
 ```
 

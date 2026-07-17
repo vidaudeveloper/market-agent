@@ -10,6 +10,10 @@ description: "社媒内容日历。触发词：社交媒体日历、发帖计划
 - "为 XX 品牌规划社媒发帖计划"
 - "生成 LinkedIn/Twitter/Instagram 内容日历"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-social`。选题、平台与文案统一消费已确认的品牌、产品、受众、渠道和目标。未连接社媒账号/API 时，本技能只输出日历与草稿，不声称已发布或已获得互动数据。
+
 ## 平台选择指南
 
 | 平台 | 最适合 | 受众 | 频率 |

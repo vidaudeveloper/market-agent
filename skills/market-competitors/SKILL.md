@@ -10,6 +10,16 @@ description: "竞品情报分析。触发词：竞品分析、竞争对手、竞
 - "帮我做竞品调研"
 - "和竞品对比一下"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md`。竞品实体统一写入 `entities.competitors`，核心指标写入 `facts` 并关联 evidence；默认至少 2 家：
+
+```bash
+node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill market-competitors
+```
+
+TikTok Shop 竞品优先走出海匠 `search → get_detail → get_related(similar/creators/videos)`，Playwright 截图只作视觉证据。
+
 ## 执行流程
 
 ### 第一步：竞品识别（三类）

@@ -10,6 +10,10 @@ description: "产品上市策略。触发词：上市策略、launch计划、产
 - "做一个 launch playbook"
 - "新品发布需要准备什么"
 
+## Project Facts 门禁
+
+先读 `skills/PROJECT-FACTS.md` 并执行 `gate --skill market-launch`。上市计划必须复用上游产品、受众、目标、渠道与证据；预算或日期仅为建议时写入 assumptions，不得伪装成客户已确认计划。
+
 ## 搜集上下文
 在生成方案前确认：发布什么、目标受众、发布目标、发布日期、可用渠道、价格、是否已有用户、预算
 

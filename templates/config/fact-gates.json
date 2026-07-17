@@ -1,0 +1,349 @@
+{
+  "version": "1.0",
+  "skills": {
+    "default": {
+      "required_fields": [
+        "project.name"
+      ],
+      "recommended_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.market",
+        "project.objectives"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-audit": {
+      "required_fields": [
+        "project.name",
+        "inputs.urls"
+      ],
+      "recommended_fields": [
+        "project.objectives",
+        "project.target_audience"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "website",
+            "standalone_site"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 1
+    },
+    "market-brand": {
+      "required_fields": [
+        "project.brand_name",
+        "inputs.urls"
+      ],
+      "recommended_fields": [
+        "project.target_audience",
+        "project.product_name"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "website",
+            "standalone_site"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 1
+    },
+    "market-competitors": {
+      "required_fields": [
+        "project.product_name",
+        "project.market"
+      ],
+      "minimum_entities": {
+        "competitors": 2
+      },
+      "minimum_evidence": 2,
+      "recommended_entities": {
+        "products": 2,
+        "sellers": 2
+      }
+    },
+    "market-seo": {
+      "required_fields": [
+        "inputs.urls"
+      ],
+      "recommended_fields": [
+        "project.category",
+        "project.objectives"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "website",
+            "standalone_site"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 1
+    },
+    "market-funnel": {
+      "required_fields": [
+        "inputs.urls",
+        "project.objectives"
+      ],
+      "recommended_fields": [
+        "project.target_audience"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "website",
+            "standalone_site"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 1
+    },
+    "market-landing": {
+      "required_fields": [
+        "inputs.urls"
+      ],
+      "recommended_fields": [
+        "project.objectives",
+        "project.target_audience"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "website",
+            "standalone_site"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 1
+    },
+    "market-copy": {
+      "required_fields": [
+        "project.product_name",
+        "project.target_audience"
+      ],
+      "recommended_fields": [
+        "project.brand_name",
+        "inputs.urls"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-emails": {
+      "required_fields": [
+        "project.product_name",
+        "project.target_audience",
+        "project.objectives"
+      ],
+      "recommended_fields": [
+        "project.brand_name",
+        "inputs.urls"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-social": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.target_audience",
+        "project.channels"
+      ],
+      "recommended_fields": [
+        "project.objectives",
+        "project.timeline.horizon_days"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-ads": {
+      "required_fields": [
+        "project.product_name",
+        "project.target_audience",
+        "project.objectives"
+      ],
+      "recommended_fields": [
+        "project.budget.amount",
+        "project.channels"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-launch": {
+      "required_fields": [
+        "project.product_name",
+        "project.target_audience",
+        "project.objectives",
+        "project.channels"
+      ],
+      "recommended_fields": [
+        "project.timeline.start_date",
+        "project.budget.amount"
+      ],
+      "minimum_evidence": 1
+    },
+    "market-proposal": {
+      "required_fields": [
+        "project.brand_name",
+        "project.objectives"
+      ],
+      "recommended_fields": [
+        "project.budget.amount",
+        "project.timeline.horizon_days"
+      ],
+      "minimum_evidence": 2
+    },
+    "tts-growth-plan": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.category",
+        "project.market",
+        "project.objectives"
+      ],
+      "minimum_entities": {
+        "competitors": 2
+      },
+      "minimum_evidence": 3,
+      "minimum_screenshots": 1,
+      "required_fact_topics": [
+        {
+          "any_of": [
+            "sales",
+            "gmv"
+          ],
+          "minimum": 2
+        },
+        {
+          "any_of": [
+            "channel_mix",
+            "selling_method"
+          ],
+          "minimum": 1
+        }
+      ]
+    },
+    "tts-operation-model": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.market",
+        "project.objectives",
+        "project.timeline.horizon_days"
+      ],
+      "minimum_entities": {
+        "competitors": 2
+      },
+      "minimum_evidence": 3,
+      "required_fact_topics": [
+        {
+          "any_of": [
+            "sales",
+            "gmv",
+            "conversion"
+          ],
+          "minimum": 2
+        }
+      ]
+    },
+    "tts-pricing-logic": {
+      "required_fields": [
+        "project.product_name",
+        "project.objectives",
+        "project.timeline.horizon_days"
+      ],
+      "recommended_fields": [
+        "project.budget.amount"
+      ],
+      "minimum_evidence": 1,
+      "required_fact_topics": [
+        {
+          "any_of": [
+            "asp",
+            "gmv_target",
+            "sales_target"
+          ],
+          "minimum": 2
+        }
+      ]
+    },
+    "tts-partnership-proposal": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.objectives",
+        "project.timeline.horizon_days"
+      ],
+      "minimum_entities": {
+        "competitors": 2
+      },
+      "minimum_evidence": 3,
+      "minimum_screenshots": 1
+    },
+    "tts-full-case": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.category",
+        "project.market",
+        "project.objectives",
+        "project.timeline.horizon_days"
+      ],
+      "minimum_entities": {
+        "competitors": 2
+      },
+      "recommended_entities": {
+        "products": 3,
+        "sellers": 2,
+        "creators": 3,
+        "videos": 3
+      },
+      "minimum_evidence": 5,
+      "minimum_screenshots": 2,
+      "required_fact_topics": [
+        {
+          "any_of": [
+            "sales",
+            "gmv"
+          ],
+          "minimum": 2
+        },
+        {
+          "any_of": [
+            "channel_mix",
+            "selling_method"
+          ],
+          "minimum": 1
+        }
+      ]
+    },
+    "amazon-agency-plan": {
+      "required_fields": [
+        "project.brand_name",
+        "project.product_name",
+        "project.market",
+        "inputs.urls"
+      ],
+      "recommended_fields": [
+        "project.objectives",
+        "project.budget.amount"
+      ],
+      "required_url_types": [
+        {
+          "any_of": [
+            "amazon_product",
+            "amazon_store"
+          ],
+          "minimum": 1
+        }
+      ],
+      "minimum_evidence": 2,
+      "recommended_entities": {
+        "competitors": 2
+      }
+    }
+  }
+}
