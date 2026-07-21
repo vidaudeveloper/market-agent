@@ -180,10 +180,11 @@ node scripts/project-facts.js gate --file output/{project}-project-facts.json --
 
 **飞书文档建议结构：**
 
+0. **给老板看的话**（纯文字）+ **客户关切**（见 DELIVERY-STANDARD 2.0）
 1. 核心结论（3–6 条）
-2. Agent 分析 vs 出海匠结论对照
-3. 策略与预算表
-4. 达人推荐总表（若有）
+2. Agent 分析 vs 出海匠结论对照（文字对照优先，表作证据）
+3. 策略与预算（表前后有解读）
+4. 达人推荐总表（若有；过长放附录）
 5. 数据来源汇总 + 出海匠截图
 
 ---
@@ -225,12 +226,13 @@ node scripts/project-facts.js gate --file output/{project}-project-facts.json --
 
 ## 七点六、飞书交付结构（默认单文档）
 
+0. 给老板看的话 + 客户关切  
 1. 核心结论  
 2. Agent 分析 vs 出海匠结论  
 3. 策略与预算  
-4. TTS 带货对标表（若有 pipeline）  
+4. TTS 带货对标表（若有 pipeline；表间有解读）  
 5. 宣发 BD 达人表（若有对话）  
-6. 数据来源汇总 + 截图  
+6. 数据来源汇总 + 截图（明细可附录）  
 
 对话全文过长时：正文放**摘要 + 关键表**，附录注明 `output/出海匠Agent回复-*.md` 路径。
 

@@ -1,12 +1,23 @@
 # {{BRAND_NAME}} & {{AGENCY_NAME}} TTS合作方案
 
-> 模板：`templates/tts-partnership.template.md` · 技能：`skills/tts-partnership-proposal/SKILL.md`
+> 模板：`templates/tts-partnership.template.md` · 技能：`skills/tts-partnership-proposal/SKILL.md`  
+> 排版：遵守 `skills/DELIVERY-STANDARD.md`（第一屏无表、表间必有解读）
 
 # 达人带货合作&报价方案
 
 尊敬的{{BRAND_NAME}}品牌方团队成员，你们好：
 
-**感谢贵方对我们{{AGENCY_NAME}}的关注。根据您的产品和店铺情况、品牌背景，我们为您定制了以下合作方案套组的提案**，旨在最大化品牌曝光与冷启、销售转化。
+感谢贵方对{{AGENCY_NAME}}的关注。我们基于贵司产品与店铺现状，定制了本合作提案。
+
+## 给老板看的话
+
+{{SITUATION}}。{{COMPLICATION}}。本次希望帮贵司拍板：{{DECISION_QUESTION}}。我们的建议是：{{ANSWER_AND_FIRST_90D_FOCUS}}（5–8 行纯文字，**此处禁止 KPI 表**）。
+
+## 客户关切
+
+- **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
+- **本次要决定：** 是否启动 {{RECOMMENDED_TIER}} / 是否先打爆 {{HERO_SKU}}
+- **请记住：** ① {{TAKEAWAY_1}} ② {{TAKEAWAY_2}} ③ {{TAKEAWAY_3}}
 
 ---
 

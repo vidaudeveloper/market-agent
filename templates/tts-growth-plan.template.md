@@ -1,9 +1,20 @@
 # {{BRAND_NAME}} TikTok 市场分析与打品计划
 
 > 模板：`templates/tts-growth-plan.template.md` · 技能：`skills/tts-growth-plan/SKILL.md`  
-> Intake：`templates/intake-tts.json`
+> Intake：`templates/intake-tts.json`  
+> 排版：遵守 `skills/DELIVERY-STANDARD.md`（第一屏无表、表间必有解读）
 
 ---
+
+## 给老板看的话
+
+{{SITUATION_ONE_SENTENCE}}。{{COMPLICATION_ONE_SENTENCE}}。本次需要决定的是：{{DECISION_QUESTION}}。建议：{{ANSWER_AND_FIRST_STEP}}（可含 1–2 个关键数字；全文 5–8 行，**禁止表格**）。
+
+## 客户关切
+
+- **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
+- **本次要决定：** {{ONE_DECISION}}
+- **请记住：** ① {{TAKEAWAY_1}} ② {{TAKEAWAY_2}} ③ {{TAKEAWAY_3}}
 
 ## ❗【核心结论】
 
@@ -53,13 +64,17 @@
 
 ## 一、品牌与产品概况
 
+{{ONE_PARAGRAPH_BRAND_POSITIONING}}
+
 | 项目 | 内容 |
 |------|------|
 | 品牌 | {{BRAND_NAME}} |
 | Amazon | {{AMAZON_URL}} |
 | TikTok Shop | {{TIKTOK_SHOP_URL}} · {{TIKTOK_SHOP_STAGE}} |
 | 核心 SKU | {{HERO_SKU}} |
-| ASP | ${{ASP}} |
+| ASP | USD {{ASP}} |
+
+*表后解读：{{WHAT_THIS_MEANS_FOR_TTS}}*
 
 ---
 

@@ -1,8 +1,33 @@
 # {{BRAND_NAME}} 美区 TikTok 运营测算
 
-> 模板：`templates/tts-operation-model.template.md` · 技能：`skills/tts-operation-model/SKILL.md`
+> 模板：`templates/tts-operation-model.template.md` · 技能：`skills/tts-operation-model/SKILL.md`  
+> 排版：遵守 `skills/DELIVERY-STANDARD.md`（第一屏无表、表间必有解读）
+
+## 给老板看的话
+
+{{SITUATION}}。{{COMPLICATION}}。本次测算要回答：{{DECISION_QUESTION}}。结论先行：{{ANSWER_AND_PRIORITY_ACTION}}（5–8 行，**禁止表格**）。
+
+## 客户关切
+
+- **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
+- **本次要决定：** {{ONE_DECISION}}
+- **请记住：** ① {{TAKEAWAY_1}} ② {{TAKEAWAY_2}} ③ {{TAKEAWAY_3}}
+
+## 执行摘要（90 天目标）
+
+| 指标 | 当前 | 90 天目标 | 说明 |
+|------|------|-----------|------|
+| 月 GMV | | | |
+| 达人出单占比 | | | |
+| 核心动作 | | | |
+
+*表后解读：{{WHY_THESE_TARGETS}}*
+
+---
 
 ## 一、{{BRAND_NAME}} 店铺核心数据概览
+
+{{ONE_PARAGRAPH_SHOP_STORY}}
 
 ### 1.1 关键经营指标
 
@@ -14,7 +39,8 @@
 | 近30天销售额 | | |
 | 在售 SKU | | |
 
-*数据来源：…*
+*数据来源：…*  
+*解读：{{WHAT_THE_NUMBERS_SAY}}*
 
 ### 1.2 渠道收入结构
 
@@ -24,6 +50,8 @@
 | 商品卡 | | |
 | 店铺自营 | | |
 | 商城 | | |
+
+*解读：{{CHANNEL_IMPLICATION}}（下一张图/表前必须先写这段）*
 
 <!-- chart:doughnut -->
 
@@ -43,7 +71,7 @@
 
 ### 1.4 销售趋势分析
 
-（30 天每日/分段趋势描述；有数据写具体日期与金额）
+（30 天分段趋势用**文字**写清拐点；明细日表可放附录）
 
 ---
 
