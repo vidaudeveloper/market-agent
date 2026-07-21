@@ -64,6 +64,8 @@
 | `competitor-screenshots-stealth.js` | 竞品官网/Amazon 截图 | `node scripts/competitor-screenshots-stealth.js --all --headed --profile auth/chrome-user-clone` |
 | `project-facts.js` | 项目事实包 init/merge/validate/gate | `node scripts/project-facts.js gate --file output/project-facts.json --skill market-seo` |
 
+> 临时探测 / 客户一次性脚本请放 `scripts/_scratch/`（已 gitignore），勿堆进 `scripts/` 主目录。
+
 ---
 
 ## 可选 MCP 扩展（需单独安装）

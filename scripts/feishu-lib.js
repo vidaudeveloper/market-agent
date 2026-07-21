@@ -974,7 +974,8 @@ async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
               method: 'PATCH',
               body: JSON.stringify({
                 update_text_style: {
-                  style: { align: 2 },
+                  // 1=左对齐；表头与正文统一左对齐，避免「表头居中 / 正文居左」混排
+                  style: { align: 1 },
                   fields: [1]
                 }
               })
@@ -989,6 +990,54 @@ async function styleFeishuTableHeaders(accessToken, documentId, options = {}) {
   }
 
   return styled;
+}
+
+/**
+ * 统一文档内所有表格单元格文字对齐（默认左对齐）。
+ * 飞书 Markdown 转换后常出现表头居中、正文居左混排。
+ * align: 1=左 2=中 3=右
+ */
+async function unifyFeishuTableCellAlign(accessToken, documentId, options = {}) {
+  const align = options.align ?? 1;
+  const tableBlocks = await listDocumentTableBlocks(accessToken, documentId);
+  const allBlocks = await listAllDocumentBlocks(accessToken, documentId);
+  let patched = 0;
+
+  for (const { block } of tableBlocks) {
+    const table = block.table;
+    if (!table?.cells?.length) continue;
+
+    for (const cellId of table.cells) {
+      const cellBlock = allBlocks[cellId];
+      if (!cellBlock?.children?.length) continue;
+
+      for (const childId of cellBlock.children) {
+        const textBlock = allBlocks[childId];
+        if (!textBlock || textBlock.block_type !== 2) continue;
+
+        try {
+          await feishuJson(
+            accessToken,
+            `/docx/v1/documents/${documentId}/blocks/${childId}`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({
+                update_text_style: {
+                  style: { align },
+                  fields: [1]
+                }
+              })
+            }
+          );
+          patched++;
+        } catch (err) {
+          console.warn(`   ⚠ 表格对齐失败 (${childId}): ${err.message}`);
+        }
+      }
+    }
+  }
+
+  return patched;
 }
 
 function encodeFeishuLink(url) {
@@ -1399,6 +1448,7 @@ module.exports = {
   listAllDocumentBlocks,
   styleFeishuTableHeaders,
   styleFeishuDocumentTitle,
+  unifyFeishuTableCellAlign,
   embedImagesInTableColumn,
   patchTableColumnHyperlinks,
   isValidImageBuffer,

@@ -9,6 +9,10 @@ node_modules/
 # 本地生成报告与图表（含客户交付物）
 output/
 
+# 本机试跑脚本（禁止入库；正式能力进 skill + scripts/ 主目录）
+scripts/_scratch/*
+!scripts/_scratch/README.md
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db

@@ -3,11 +3,11 @@
 > 模板：`templates/tts-operation-model.template.md` · 技能：`skills/tts-operation-model/SKILL.md`  
 > 排版：遵守 `skills/DELIVERY-STANDARD.md`（第一屏无表、表间必有解读）
 
-## 给老板看的话
+## 开篇摘要
 
 {{SITUATION}}。{{COMPLICATION}}。本次测算要回答：{{DECISION_QUESTION}}。结论先行：{{ANSWER_AND_PRIORITY_ACTION}}（5–8 行，**禁止表格**）。
 
-## 客户关切
+## 决策要点
 
 - **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
 - **本次要决定：** {{ONE_DECISION}}

@@ -232,7 +232,8 @@ node scripts/feishu-export.js output/报告.md "标题" --embeds-json output/项
 
 或由 pipeline / `build-anta-feishu-test.js` 内联传入 `tableEmbeds` + `linkPatches`（见 `scripts/feishu-export.js`）。
 
-**5. 表头**：`styleFeishuTableHeaders` 仅加粗，不加背景色。
+**5. 表头**：`styleFeishuTableHeaders` 仅加粗，不加背景色。  
+**6. 对齐**：导出后默认 `unifyFeishuTableCellAlign` 全部**左对齐**（避免表头居中、正文居左混排）。
 
 **6. 长表**：`feishu-chunk-utils.js` → `splitMarkdownChunksSafe` 保持表格完整。
 

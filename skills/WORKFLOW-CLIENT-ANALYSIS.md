@@ -180,7 +180,7 @@ node scripts/project-facts.js gate --file output/{project}-project-facts.json --
 
 **飞书文档建议结构：**
 
-0. **给老板看的话**（纯文字）+ **客户关切**（见 DELIVERY-STANDARD 2.0）
+0. **开篇摘要**（纯文字）+ **决策要点**（见 DELIVERY-STANDARD 2.0）
 1. 核心结论（3–6 条）
 2. Agent 分析 vs 出海匠结论对照（文字对照优先，表作证据）
 3. 策略与预算（表前后有解读）
@@ -226,7 +226,7 @@ node scripts/project-facts.js gate --file output/{project}-project-facts.json --
 
 ## 七点六、飞书交付结构（默认单文档）
 
-0. 给老板看的话 + 客户关切  
+0. 开篇摘要 + 决策要点  
 1. 核心结论  
 2. Agent 分析 vs 出海匠结论  
 3. 策略与预算  

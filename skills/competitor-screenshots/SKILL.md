@@ -82,7 +82,6 @@ node scripts/competitor-screenshots-stealth.js --all --headed
 | `scripts/chrome-profile-clone.js` | 克隆日常 Chrome 配置（成功方案） |
 | `scripts/competitor-screenshots-stealth.js` | `--profile` / `--cdp` / `--amazon` / `--official` / `--headed` |
 | `scripts/chrome-cdp-start.js` | 尝试启动 CDP（备选） |
-| `scripts/competitor-screenshots-retry2.js` | Adidas 简易验证 / Amazon 先暖首页 |
 
 ## 与其它 skill 的关系
 

@@ -9,11 +9,11 @@
 
 感谢贵方对{{AGENCY_NAME}}的关注。我们基于贵司产品与店铺现状，定制了本合作提案。
 
-## 给老板看的话
+## 开篇摘要
 
 {{SITUATION}}。{{COMPLICATION}}。本次希望帮贵司拍板：{{DECISION_QUESTION}}。我们的建议是：{{ANSWER_AND_FIRST_90D_FOCUS}}（5–8 行纯文字，**此处禁止 KPI 表**）。
 
-## 客户关切
+## 决策要点
 
 - **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
 - **本次要决定：** 是否启动 {{RECOMMENDED_TIER}} / 是否先打爆 {{HERO_SKU}}

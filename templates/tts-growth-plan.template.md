@@ -6,11 +6,11 @@
 
 ---
 
-## 给老板看的话
+## 开篇摘要
 
 {{SITUATION_ONE_SENTENCE}}。{{COMPLICATION_ONE_SENTENCE}}。本次需要决定的是：{{DECISION_QUESTION}}。建议：{{ANSWER_AND_FIRST_STEP}}（可含 1–2 个关键数字；全文 5–8 行，**禁止表格**）。
 
-## 客户关切
+## 决策要点
 
 - **决策焦点：** {{GROWTH_OR_COST_OR_RISK}}
 - **本次要决定：** {{ONE_DECISION}}

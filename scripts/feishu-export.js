@@ -26,6 +26,7 @@ const {
   insertChartsIntoDocument,
   styleFeishuTableHeaders,
   styleFeishuDocumentTitle,
+  unifyFeishuTableCellAlign,
   embedImagesInTableColumn,
   listAllDocumentBlocks,
   listDocumentTableBlocks,
@@ -201,6 +202,14 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
       enabled: options.styleTableHeaders !== false
     });
     if (styled) console.log(`   已加粗 ${styled} 个表头单元格`);
+  }
+
+  if (options.unifyTableAlign !== false) {
+    console.log('📐 正在统一表格对齐（全部左对齐）…');
+    const aligned = await unifyFeishuTableCellAlign(userAccessToken, documentId, {
+      align: options.tableAlign ?? 1
+    });
+    if (aligned) console.log(`   已统一 ${aligned} 个单元格对齐`);
   }
 
   if (options.styleDocumentTitle !== false) {
