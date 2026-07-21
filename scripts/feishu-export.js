@@ -33,6 +33,7 @@ const {
 } = require('./feishu-lib');
 const { generateChartsFromMarkdown } = require('./chart-markdown');
 const { sanitizeMarkdownForFeishu } = require('./markdown-feishu-sanitize');
+const { extractAndReplaceLocalImages, embedMarkedLocalImages } = require('./feishu-local-images');
 const { splitMarkdownChunksSafe } = require('./feishu-chunk-utils');
 const { hasApiKey } = require('./ai-lib');
 
@@ -127,10 +128,19 @@ async function createFeishuDocument(userToken, title, env) {
 async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, auth, options = {}) {
   let charts = [];
   let content = markdown;
+  const root = options.root || path.resolve(__dirname, '..');
+  const mdDir = options.mdDir || root;
+
+  // 本地 ![](path) 飞书 convert 无法读取本机文件 → 先换标记，后再 API 上传
+  const localImagePack = extractAndReplaceLocalImages(content, mdDir, root);
+  content = localImagePack.markdown;
+  if (localImagePack.images.length) {
+    console.log(`🖼️  检测到 ${localImagePack.images.length} 张本地配图，将在正文对应位置上传`);
+  }
 
   if (options.withCharts) {
     console.log('📊 正在从 Markdown 标记表格生成图表（QuickChart 优先）…');
-    const generated = await generateChartsFromMarkdown(markdown, {
+    const generated = await generateChartsFromMarkdown(content, {
       allTables: options.allChartTables,
       engine: options.chartEngine || 'quickchart',
       fallbackAi: options.chartFallbackAi !== false && hasApiKey(env)
@@ -154,6 +164,28 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
     } catch (error) {
       throw new Error(`${error.message}\n${INSERT_PERMISSION_HINT}`);
     }
+  }
+
+  if (localImagePack.images.length) {
+    console.log('🖼️  正在按正文标记上传本地截图…');
+    const {
+      listAllDocumentBlocks,
+      getDocumentChildrenOrder,
+      insertLocalImageAfterBlock,
+      insertLocalImageIntoDocument
+    } = require('./feishu-lib');
+    const imgResult = await embedMarkedLocalImages(
+      userAccessToken,
+      documentId,
+      localImagePack.images,
+      {
+        listAllDocumentBlocks,
+        getDocumentChildrenOrder,
+        insertLocalImageAfterBlock,
+        insertLocalImageIntoDocument
+      }
+    );
+    console.log(`   本地图上传完成：成功 ${imgResult.uploaded}，失败/缺失 ${imgResult.missing}`);
   }
 
   if (charts.length) {
@@ -224,6 +256,7 @@ async function exportMarkdownToFeishu(markdown, title, env, userAccessToken, aut
     title,
     chunks: chunks.length,
     charts: charts.length,
+    localImages: localImagePack.images.length,
     ownership
   };
 }
@@ -284,12 +317,15 @@ if (require.main === module) {
       chartEngine: flags.has('--charts-ai') ? 'ai' : 'quickchart',
       chartFallbackAi: !flags.has('--charts-ai') && hasApiKey(env),
       tableEmbeds,
-      linkPatches
+      linkPatches,
+      mdDir: path.dirname(filePath),
+      root: path.resolve(__dirname, '..')
     });
     console.log('\n✅ 导出成功!');
     console.log('标题:', result.title);
     console.log('分段:', result.chunks);
     if (result.charts) console.log('图表:', result.charts);
+    if (result.localImages) console.log('本地配图:', result.localImages);
     console.log('链接:', result.url);
     if (result.ownership?.transferred) {
       console.log('权限: 文档所有权已转移给你，可直接编辑');

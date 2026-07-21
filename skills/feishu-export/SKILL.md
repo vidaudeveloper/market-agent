@@ -25,7 +25,8 @@ description: "飞书文档导出。触发词：导出飞书、飞书文档、导
 | 输出 | 飞书云文档链接 `https://feishu.cn/docx/{document_id}` |
 | 文档类型 | 飞书**云文档（docx）**，不是电子表格 |
 | 表格 | Markdown 表格会转为飞书原生表格 |
-| **排版** | 导出前自动去除 `$`（防飞书公式体）与正文数字加粗；撰写时即用「500 万美元」不用 `$` |
+| **本地截图** | Markdown 中的 `![](相对路径.png)` 飞书无法读取本机文件；`feishu-export.js` 会自动替换为标记并用 API 上传到正文对应位置（见 `scripts/feishu-local-images.js`） |
+| **排版** | 导出前经 `markdown-feishu-sanitize.js`：表格/正文 `$金额` → `USD …` / `…万美元`，残留 `$` 改全角，避免飞书公式体；撰写时亦优先写「500 万美元」 |
 | **表头样式** | 默认表头**单元格**浅蓝底（`LightBlueBackground`），非字体高亮 |
 | **大标题** | 默认首个一级标题蓝色（`text_color: 5`） |
 | **AI 图表** | 表格前加 `<!-- chart -->`，配合 `--charts` 用 `gpt-image-2` 生成 PNG 插入飞书 |

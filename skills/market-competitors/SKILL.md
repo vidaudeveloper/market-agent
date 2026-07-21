@@ -18,7 +18,9 @@ description: "竞品情报分析。触发词：竞品分析、竞争对手、竞
 node scripts/project-facts.js gate --file output/{project}-project-facts.json --skill market-competitors
 ```
 
-TikTok Shop 竞品优先走出海匠 `search → get_detail → get_related(similar/creators/videos)`，Playwright 截图只作视觉证据。
+TikTok Shop 竞品优先走出海匠 `search → get_detail → get_related(similar/creators/videos)`。
+
+**官网 / Amazon 店铺截图**（视觉证据）按 `skills/competitor-screenshots/SKILL.md` 执行：优先「克隆日常 Chrome 配置 + `--profile auth/chrome-user-clone --headed`」，不要依赖本机常失败的 CDP 挂接。
 
 ## 执行流程
 

@@ -11,6 +11,7 @@
 | 1 | market-audit | 营销全量审计 | 网站 URL | MARKETING-AUDIT.md（评分+建议） | ✅ |
 | 2 | market-brand | 品牌声调分析 | 网站 URL | BRAND-VOICE.md（调性指南） | ✅ |
 | 3 | market-competitors | 竞品情报分析 | 网站 URL | COMPETITOR-REPORT.md | ✅ |
+| 3b | competitor-screenshots | 竞品官网/店铺截图（克隆 Chrome 登录态） | 品牌列表 | output/assets/* 截图 | ✅ |
 | 4 | market-report | 营销报告生成 | 已有分析数据 | MARKETING-REPORT.md | ✅ |
 | 5 | market-funnel | 转化漏斗分析 | 网站 URL | FUNNEL-ANALYSIS.md | ✅ |
 | 6 | market-landing | 落地页 CRO | 落地页 URL | LANDING-CRO.md | ✅ |
@@ -59,6 +60,8 @@
 | `feishu-read-doc.js` | 读取飞书 docx/wiki → Markdown | `node scripts/feishu-read-doc.js --url "https://...feishu.cn/docx/..."` |
 | `feishu-auth.js` | 飞书 OAuth 授权（自动开浏览器） | `node scripts/feishu-auth.js` |
 | `feishu-export.js` | 导出 Markdown 到用户飞书 | `node scripts/feishu-export.js output/report.md "标题" --charts` |
+| `chrome-profile-clone.js` | 克隆日常 Chrome 配置（截图登录态） | `node scripts/chrome-profile-clone.js` |
+| `competitor-screenshots-stealth.js` | 竞品官网/Amazon 截图 | `node scripts/competitor-screenshots-stealth.js --all --headed --profile auth/chrome-user-clone` |
 | `project-facts.js` | 项目事实包 init/merge/validate/gate | `node scripts/project-facts.js gate --file output/project-facts.json --skill market-seo` |
 
 ---

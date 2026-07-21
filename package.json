@@ -20,6 +20,8 @@
     "facts:init": "node scripts/project-facts.js init",
     "facts:merge": "node scripts/project-facts.js merge",
     "facts:from-chj": "node scripts/chuhaijiang-facts-mapper.js",
+    "screenshots:clone-profile": "node scripts/chrome-profile-clone.js",
+    "screenshots:competitors": "node scripts/competitor-screenshots-stealth.js",
     "facts:validate": "node scripts/project-facts.js validate",
     "facts:gate": "node scripts/project-facts.js gate",
     "facts:schema": "node scripts/project-facts.js schema --out schemas/project-facts.schema.json",
